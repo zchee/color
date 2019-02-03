@@ -1,4 +1,4 @@
-package color
+package color_test
 
 import (
 	"bytes"
@@ -6,7 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mattn/go-colorable"
+	colorable "github.com/mattn/go-colorable"
+	"github.com/zchee/color"
 )
 
 // Testing colors is kinda different. First we test for given colors and their
@@ -14,34 +15,34 @@ import (
 // Each visual test includes the color name to be compared.
 func TestColor(t *testing.T) {
 	rb := new(bytes.Buffer)
-	Output = rb
+	color.Output = rb
 
-	NoColor = false
+	color.NoColor = false
 
 	testColors := []struct {
 		text string
-		code Attribute
+		code color.Attribute
 	}{
-		{text: "black", code: FgBlack},
-		{text: "red", code: FgRed},
-		{text: "green", code: FgGreen},
-		{text: "yellow", code: FgYellow},
-		{text: "blue", code: FgBlue},
-		{text: "magent", code: FgMagenta},
-		{text: "cyan", code: FgCyan},
-		{text: "white", code: FgWhite},
-		{text: "hblack", code: FgHiBlack},
-		{text: "hred", code: FgHiRed},
-		{text: "hgreen", code: FgHiGreen},
-		{text: "hyellow", code: FgHiYellow},
-		{text: "hblue", code: FgHiBlue},
-		{text: "hmagent", code: FgHiMagenta},
-		{text: "hcyan", code: FgHiCyan},
-		{text: "hwhite", code: FgHiWhite},
+		{text: "black", code: color.FgBlack},
+		{text: "red", code: color.FgRed},
+		{text: "green", code: color.FgGreen},
+		{text: "yellow", code: color.FgYellow},
+		{text: "blue", code: color.FgBlue},
+		{text: "magent", code: color.FgMagenta},
+		{text: "cyan", code: color.FgCyan},
+		{text: "white", code: color.FgWhite},
+		{text: "hblack", code: color.FgHiBlack},
+		{text: "hred", code: color.FgHiRed},
+		{text: "hgreen", code: color.FgHiGreen},
+		{text: "hyellow", code: color.FgHiYellow},
+		{text: "hblue", code: color.FgHiBlue},
+		{text: "hmagent", code: color.FgHiMagenta},
+		{text: "hcyan", code: color.FgHiCyan},
+		{text: "hwhite", code: color.FgHiWhite},
 	}
 
 	for _, c := range testColors {
-		New(c.code).Print(c.text)
+		color.New(c.code).Print(c.text)
 
 		line, _ := rb.ReadString('\n')
 		scannedLine := fmt.Sprintf("%q", line)
@@ -56,7 +57,7 @@ func TestColor(t *testing.T) {
 	}
 
 	for _, c := range testColors {
-		line := New(c.code).Sprintf("%s", c.text)
+		line := color.New(c.code).Sprintf("%s", c.text)
 		scannedLine := fmt.Sprintf("%q", line)
 		colored := fmt.Sprintf("\x1b[%dm%s\x1b[0m", c.code, c.text)
 		escapedForm := fmt.Sprintf("%q", colored)
@@ -70,13 +71,13 @@ func TestColor(t *testing.T) {
 }
 
 func TestColorEquals(t *testing.T) {
-	fgblack1 := New(FgBlack)
-	fgblack2 := New(FgBlack)
-	bgblack := New(BgBlack)
-	fgbgblack := New(FgBlack, BgBlack)
-	fgblackbgred := New(FgBlack, BgRed)
-	fgred := New(FgRed)
-	bgred := New(BgRed)
+	fgblack1 := color.New(color.FgBlack)
+	fgblack2 := color.New(color.FgBlack)
+	bgblack := color.New(color.BgBlack)
+	fgbgblack := color.New(color.FgBlack, color.BgBlack)
+	fgblackbgred := color.New(color.FgBlack, color.BgRed)
+	fgred := color.New(color.FgRed)
+	bgred := color.New(color.BgRed)
 
 	if !fgblack1.Equals(fgblack2) {
 		t.Error("Two black colors are not equal")
@@ -105,32 +106,32 @@ func TestColorEquals(t *testing.T) {
 
 func TestNoColor(t *testing.T) {
 	rb := new(bytes.Buffer)
-	Output = rb
+	color.Output = rb
 
 	testColors := []struct {
 		text string
-		code Attribute
+		code color.Attribute
 	}{
-		{text: "black", code: FgBlack},
-		{text: "red", code: FgRed},
-		{text: "green", code: FgGreen},
-		{text: "yellow", code: FgYellow},
-		{text: "blue", code: FgBlue},
-		{text: "magent", code: FgMagenta},
-		{text: "cyan", code: FgCyan},
-		{text: "white", code: FgWhite},
-		{text: "hblack", code: FgHiBlack},
-		{text: "hred", code: FgHiRed},
-		{text: "hgreen", code: FgHiGreen},
-		{text: "hyellow", code: FgHiYellow},
-		{text: "hblue", code: FgHiBlue},
-		{text: "hmagent", code: FgHiMagenta},
-		{text: "hcyan", code: FgHiCyan},
-		{text: "hwhite", code: FgHiWhite},
+		{text: "black", code: color.FgBlack},
+		{text: "red", code: color.FgRed},
+		{text: "green", code: color.FgGreen},
+		{text: "yellow", code: color.FgYellow},
+		{text: "blue", code: color.FgBlue},
+		{text: "magent", code: color.FgMagenta},
+		{text: "cyan", code: color.FgCyan},
+		{text: "white", code: color.FgWhite},
+		{text: "hblack", code: color.FgHiBlack},
+		{text: "hred", code: color.FgHiRed},
+		{text: "hgreen", code: color.FgHiGreen},
+		{text: "hyellow", code: color.FgHiYellow},
+		{text: "hblue", code: color.FgHiBlue},
+		{text: "hmagent", code: color.FgHiMagenta},
+		{text: "hcyan", code: color.FgHiCyan},
+		{text: "hwhite", code: color.FgHiWhite},
 	}
 
 	for _, c := range testColors {
-		p := New(c.code)
+		p := color.New(c.code)
 		p.DisableColor()
 		p.Print(c.text)
 
@@ -141,12 +142,12 @@ func TestNoColor(t *testing.T) {
 	}
 
 	// global check
-	NoColor = true
+	color.NoColor = true
 	defer func() {
-		NoColor = false
+		color.NoColor = false
 	}()
 	for _, c := range testColors {
-		p := New(c.code)
+		p := color.New(c.code)
 		p.Print(c.text)
 
 		line, _ := rb.ReadString('\n')
@@ -159,153 +160,153 @@ func TestNoColor(t *testing.T) {
 
 func TestColorVisual(t *testing.T) {
 	// First Visual Test
-	Output = colorable.NewColorableStdout()
+	color.Output = colorable.NewColorableStdout()
 
-	New(FgRed).Printf("red\t")
-	New(BgRed).Print("         ")
-	New(FgRed, Bold).Println(" red")
+	color.New(color.FgRed).Printf("red\t")
+	color.New(color.BgRed).Print("         ")
+	color.New(color.FgRed, color.Bold).Println(" red")
 
-	New(FgGreen).Printf("green\t")
-	New(BgGreen).Print("         ")
-	New(FgGreen, Bold).Println(" green")
+	color.New(color.FgGreen).Printf("green\t")
+	color.New(color.BgGreen).Print("         ")
+	color.New(color.FgGreen, color.Bold).Println(" green")
 
-	New(FgYellow).Printf("yellow\t")
-	New(BgYellow).Print("         ")
-	New(FgYellow, Bold).Println(" yellow")
+	color.New(color.FgYellow).Printf("yellow\t")
+	color.New(color.BgYellow).Print("         ")
+	color.New(color.FgYellow, color.Bold).Println(" yellow")
 
-	New(FgBlue).Printf("blue\t")
-	New(BgBlue).Print("         ")
-	New(FgBlue, Bold).Println(" blue")
+	color.New(color.FgBlue).Printf("blue\t")
+	color.New(color.BgBlue).Print("         ")
+	color.New(color.FgBlue, color.Bold).Println(" blue")
 
-	New(FgMagenta).Printf("magenta\t")
-	New(BgMagenta).Print("         ")
-	New(FgMagenta, Bold).Println(" magenta")
+	color.New(color.FgMagenta).Printf("magenta\t")
+	color.New(color.BgMagenta).Print("         ")
+	color.New(color.FgMagenta, color.Bold).Println(" magenta")
 
-	New(FgCyan).Printf("cyan\t")
-	New(BgCyan).Print("         ")
-	New(FgCyan, Bold).Println(" cyan")
+	color.New(color.FgCyan).Printf("cyan\t")
+	color.New(color.BgCyan).Print("         ")
+	color.New(color.FgCyan, color.Bold).Println(" cyan")
 
-	New(FgWhite).Printf("white\t")
-	New(BgWhite).Print("         ")
-	New(FgWhite, Bold).Println(" white")
+	color.New(color.FgWhite).Printf("white\t")
+	color.New(color.BgWhite).Print("         ")
+	color.New(color.FgWhite, color.Bold).Println(" white")
 	fmt.Println("")
 
 	// Second Visual test
-	Black("black")
-	Red("red")
-	Green("green")
-	Yellow("yellow")
-	Blue("blue")
-	Magenta("magenta")
-	Cyan("cyan")
-	White("white")
-	HiBlack("hblack")
-	HiRed("hred")
-	HiGreen("hgreen")
-	HiYellow("hyellow")
-	HiBlue("hblue")
-	HiMagenta("hmagenta")
-	HiCyan("hcyan")
-	HiWhite("hwhite")
+	color.Black("black")
+	color.Red("red")
+	color.Green("green")
+	color.Yellow("yellow")
+	color.Blue("blue")
+	color.Magenta("magenta")
+	color.Cyan("cyan")
+	color.White("white")
+	color.HiBlack("hblack")
+	color.HiRed("hred")
+	color.HiGreen("hgreen")
+	color.HiYellow("hyellow")
+	color.HiBlue("hblue")
+	color.HiMagenta("hmagenta")
+	color.HiCyan("hcyan")
+	color.HiWhite("hwhite")
 
 	// Third visual test
 	fmt.Println()
-	Set(FgBlue)
+	color.Set(color.FgBlue)
 	fmt.Println("is this blue?")
-	Unset()
+	color.Unset()
 
-	Set(FgMagenta)
+	color.Set(color.FgMagenta)
 	fmt.Println("and this magenta?")
-	Unset()
+	color.Unset()
 
 	// Fourth Visual test
 	fmt.Println()
-	blue := New(FgBlue).PrintlnFunc()
+	blue := color.New(color.FgBlue).PrintlnFunc()
 	blue("blue text with custom print func")
 
-	red := New(FgRed).PrintfFunc()
+	red := color.New(color.FgRed).PrintfFunc()
 	red("red text with a printf func: %d\n", 123)
 
-	put := New(FgYellow).SprintFunc()
-	warn := New(FgRed).SprintFunc()
+	put := color.New(color.FgYellow).SprintFunc()
+	warn := color.New(color.FgRed).SprintFunc()
 
-	fmt.Fprintf(Output, "this is a %s and this is %s.\n", put("warning"), warn("error"))
+	fmt.Fprintf(color.Output, "this is a %s and this is %s.\n", put("warning"), warn("error"))
 
-	info := New(FgWhite, BgGreen).SprintFunc()
-	fmt.Fprintf(Output, "this %s rocks!\n", info("package"))
+	info := color.New(color.FgWhite, color.BgGreen).SprintFunc()
+	fmt.Fprintf(color.Output, "this %s rocks!\n", info("package"))
 
-	notice := New(FgBlue).FprintFunc()
+	notice := color.New(color.FgBlue).FprintFunc()
 	notice(os.Stderr, "just a blue notice to stderr")
 
 	// Fifth Visual Test
 	fmt.Println()
 
-	fmt.Fprintln(Output, BlackString("black"))
-	fmt.Fprintln(Output, RedString("red"))
-	fmt.Fprintln(Output, GreenString("green"))
-	fmt.Fprintln(Output, YellowString("yellow"))
-	fmt.Fprintln(Output, BlueString("blue"))
-	fmt.Fprintln(Output, MagentaString("magenta"))
-	fmt.Fprintln(Output, CyanString("cyan"))
-	fmt.Fprintln(Output, WhiteString("white"))
-	fmt.Fprintln(Output, HiBlackString("hblack"))
-	fmt.Fprintln(Output, HiRedString("hred"))
-	fmt.Fprintln(Output, HiGreenString("hgreen"))
-	fmt.Fprintln(Output, HiYellowString("hyellow"))
-	fmt.Fprintln(Output, HiBlueString("hblue"))
-	fmt.Fprintln(Output, HiMagentaString("hmagenta"))
-	fmt.Fprintln(Output, HiCyanString("hcyan"))
-	fmt.Fprintln(Output, HiWhiteString("hwhite"))
+	fmt.Fprintln(color.Output, color.BlackString("black"))
+	fmt.Fprintln(color.Output, color.RedString("red"))
+	fmt.Fprintln(color.Output, color.GreenString("green"))
+	fmt.Fprintln(color.Output, color.YellowString("yellow"))
+	fmt.Fprintln(color.Output, color.BlueString("blue"))
+	fmt.Fprintln(color.Output, color.MagentaString("magenta"))
+	fmt.Fprintln(color.Output, color.CyanString("cyan"))
+	fmt.Fprintln(color.Output, color.WhiteString("white"))
+	fmt.Fprintln(color.Output, color.HiBlackString("hblack"))
+	fmt.Fprintln(color.Output, color.HiRedString("hred"))
+	fmt.Fprintln(color.Output, color.HiGreenString("hgreen"))
+	fmt.Fprintln(color.Output, color.HiYellowString("hyellow"))
+	fmt.Fprintln(color.Output, color.HiBlueString("hblue"))
+	fmt.Fprintln(color.Output, color.HiMagentaString("hmagenta"))
+	fmt.Fprintln(color.Output, color.HiCyanString("hcyan"))
+	fmt.Fprintln(color.Output, color.HiWhiteString("hwhite"))
 }
 
 func TestNoFormat(t *testing.T) {
-	fmt.Printf("%s   %%s = ", BlackString("Black"))
-	Black("%s")
+	fmt.Printf("%s   %%s = ", color.BlackString("Black"))
+	color.Black("%s")
 
-	fmt.Printf("%s     %%s = ", RedString("Red"))
-	Red("%s")
+	fmt.Printf("%s     %%s = ", color.RedString("Red"))
+	color.Red("%s")
 
-	fmt.Printf("%s   %%s = ", GreenString("Green"))
-	Green("%s")
+	fmt.Printf("%s   %%s = ", color.GreenString("Green"))
+	color.Green("%s")
 
-	fmt.Printf("%s  %%s = ", YellowString("Yellow"))
-	Yellow("%s")
+	fmt.Printf("%s  %%s = ", color.YellowString("Yellow"))
+	color.Yellow("%s")
 
-	fmt.Printf("%s    %%s = ", BlueString("Blue"))
-	Blue("%s")
+	fmt.Printf("%s    %%s = ", color.BlueString("Blue"))
+	color.Blue("%s")
 
-	fmt.Printf("%s %%s = ", MagentaString("Magenta"))
-	Magenta("%s")
+	fmt.Printf("%s %%s = ", color.MagentaString("Magenta"))
+	color.Magenta("%s")
 
-	fmt.Printf("%s    %%s = ", CyanString("Cyan"))
-	Cyan("%s")
+	fmt.Printf("%s    %%s = ", color.CyanString("Cyan"))
+	color.Cyan("%s")
 
-	fmt.Printf("%s   %%s = ", WhiteString("White"))
-	White("%s")
+	fmt.Printf("%s   %%s = ", color.WhiteString("White"))
+	color.White("%s")
 
-	fmt.Printf("%s   %%s = ", HiBlackString("HiBlack"))
-	HiBlack("%s")
+	fmt.Printf("%s   %%s = ", color.HiBlackString("HiBlack"))
+	color.HiBlack("%s")
 
-	fmt.Printf("%s     %%s = ", HiRedString("HiRed"))
-	HiRed("%s")
+	fmt.Printf("%s     %%s = ", color.HiRedString("HiRed"))
+	color.HiRed("%s")
 
-	fmt.Printf("%s   %%s = ", HiGreenString("HiGreen"))
-	HiGreen("%s")
+	fmt.Printf("%s   %%s = ", color.HiGreenString("HiGreen"))
+	color.HiGreen("%s")
 
-	fmt.Printf("%s  %%s = ", HiYellowString("HiYellow"))
-	HiYellow("%s")
+	fmt.Printf("%s  %%s = ", color.HiYellowString("HiYellow"))
+	color.HiYellow("%s")
 
-	fmt.Printf("%s    %%s = ", HiBlueString("HiBlue"))
-	HiBlue("%s")
+	fmt.Printf("%s    %%s = ", color.HiBlueString("HiBlue"))
+	color.HiBlue("%s")
 
-	fmt.Printf("%s %%s = ", HiMagentaString("HiMagenta"))
-	HiMagenta("%s")
+	fmt.Printf("%s %%s = ", color.HiMagentaString("HiMagenta"))
+	color.HiMagenta("%s")
 
-	fmt.Printf("%s    %%s = ", HiCyanString("HiCyan"))
-	HiCyan("%s")
+	fmt.Printf("%s    %%s = ", color.HiCyanString("HiCyan"))
+	color.HiCyan("%s")
 
-	fmt.Printf("%s   %%s = ", HiWhiteString("HiWhite"))
-	HiWhite("%s")
+	fmt.Printf("%s   %%s = ", color.HiWhiteString("HiWhite"))
+	color.HiWhite("%s")
 }
 
 func TestNoFormatString(t *testing.T) {
@@ -315,22 +316,22 @@ func TestNoFormatString(t *testing.T) {
 		args   []interface{}
 		want   string
 	}{
-		{BlackString, "%s", nil, "\x1b[30m%s\x1b[0m"},
-		{RedString, "%s", nil, "\x1b[31m%s\x1b[0m"},
-		{GreenString, "%s", nil, "\x1b[32m%s\x1b[0m"},
-		{YellowString, "%s", nil, "\x1b[33m%s\x1b[0m"},
-		{BlueString, "%s", nil, "\x1b[34m%s\x1b[0m"},
-		{MagentaString, "%s", nil, "\x1b[35m%s\x1b[0m"},
-		{CyanString, "%s", nil, "\x1b[36m%s\x1b[0m"},
-		{WhiteString, "%s", nil, "\x1b[37m%s\x1b[0m"},
-		{HiBlackString, "%s", nil, "\x1b[90m%s\x1b[0m"},
-		{HiRedString, "%s", nil, "\x1b[91m%s\x1b[0m"},
-		{HiGreenString, "%s", nil, "\x1b[92m%s\x1b[0m"},
-		{HiYellowString, "%s", nil, "\x1b[93m%s\x1b[0m"},
-		{HiBlueString, "%s", nil, "\x1b[94m%s\x1b[0m"},
-		{HiMagentaString, "%s", nil, "\x1b[95m%s\x1b[0m"},
-		{HiCyanString, "%s", nil, "\x1b[96m%s\x1b[0m"},
-		{HiWhiteString, "%s", nil, "\x1b[97m%s\x1b[0m"},
+		{color.BlackString, "%s", nil, "\x1b[30m%s\x1b[0m"},
+		{color.RedString, "%s", nil, "\x1b[31m%s\x1b[0m"},
+		{color.GreenString, "%s", nil, "\x1b[32m%s\x1b[0m"},
+		{color.YellowString, "%s", nil, "\x1b[33m%s\x1b[0m"},
+		{color.BlueString, "%s", nil, "\x1b[34m%s\x1b[0m"},
+		{color.MagentaString, "%s", nil, "\x1b[35m%s\x1b[0m"},
+		{color.CyanString, "%s", nil, "\x1b[36m%s\x1b[0m"},
+		{color.WhiteString, "%s", nil, "\x1b[37m%s\x1b[0m"},
+		{color.HiBlackString, "%s", nil, "\x1b[90m%s\x1b[0m"},
+		{color.HiRedString, "%s", nil, "\x1b[91m%s\x1b[0m"},
+		{color.HiGreenString, "%s", nil, "\x1b[92m%s\x1b[0m"},
+		{color.HiYellowString, "%s", nil, "\x1b[93m%s\x1b[0m"},
+		{color.HiBlueString, "%s", nil, "\x1b[94m%s\x1b[0m"},
+		{color.HiMagentaString, "%s", nil, "\x1b[95m%s\x1b[0m"},
+		{color.HiCyanString, "%s", nil, "\x1b[96m%s\x1b[0m"},
+		{color.HiWhiteString, "%s", nil, "\x1b[97m%s\x1b[0m"},
 	}
 
 	for i, test := range tests {
