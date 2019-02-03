@@ -12,8 +12,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mattn/go-colorable"
-	"github.com/mattn/go-isatty"
+	colorable "github.com/mattn/go-colorable"
+	isatty "github.com/mattn/go-isatty"
 )
 
 var (

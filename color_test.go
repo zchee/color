@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	colorable "github.com/mattn/go-colorable"
+
 	"github.com/zchee/color"
 )
 
