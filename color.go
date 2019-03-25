@@ -10,7 +10,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"sync"
+	"sync/atomic"
 
 	colorable "github.com/mattn/go-colorable"
 	isatty "github.com/mattn/go-isatty"
@@ -33,9 +33,12 @@ var (
 
 	// colorsCache is used to reduce the count of created Color objects and
 	// allows to reuse already created objects with required Attribute.
-	colorsCache   = make(map[Attribute]*Color)
-	colorsCacheMu sync.Mutex // protects colorsCache
+	colorsCache atomic.Value
 )
+
+func init() {
+	colorsCache.Store(make(map[Attribute]*Color))
+}
 
 // Color defines a custom color object which is defined by SGR parameters.
 type Color struct {
@@ -436,15 +439,13 @@ func boolPtr(v bool) *bool {
 }
 
 func getCachedColor(p Attribute) *Color {
-	colorsCacheMu.Lock()
-
-	c, ok := colorsCache[p]
+	cache := colorsCache.Load().(map[Attribute]*Color)
+	c, ok := cache[p]
 	if !ok {
 		c = New(p)
-		colorsCache[p] = c
+		cache[p] = c
+		colorsCache.Store(cache)
 	}
-
-	colorsCacheMu.Unlock()
 
 	return c
 }
