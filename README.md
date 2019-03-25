@@ -180,7 +180,7 @@ $ pushd benchmarks; go test -v -tags=benchmark -run='^$' -bench=. -benchmem .; p
 
  * [Fatih Arslan](https://github.com/fatih)
  * Windows support via @mattn: [colorable](https://github.com/mattn/go-colorable)
- * 2018 [zchee (Koichi Shiraishi)](https://github.com/zchee)
+ * 2018- The color Authors.
 
 ## License
 
