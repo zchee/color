@@ -162,6 +162,14 @@ c.EnableColor()
 c.Println("This prints again cyan...")
 ```
 
+## Benchmark
+
+Run benchmarks:
+
+```sh
+$ pushd benchmarks; go test -v -tags=benchmark -run='^$' -bench=. -benchmem .; popd
+```
+
 ## Todo
 
 * Save/Return previous values
