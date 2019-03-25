@@ -437,13 +437,14 @@ func boolPtr(v bool) *bool {
 
 func getCachedColor(p Attribute) *Color {
 	colorsCacheMu.Lock()
-	defer colorsCacheMu.Unlock()
 
 	c, ok := colorsCache[p]
 	if !ok {
 		c = New(p)
 		colorsCache[p] = c
 	}
+
+	colorsCacheMu.Unlock()
 
 	return c
 }
