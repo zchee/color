@@ -194,9 +194,10 @@ func (c *Color) prepend(value Attribute) {
 // type *os.File.
 func (c *Color) Fprint(w io.Writer, a ...interface{}) (n int, err error) {
 	c.setWriter(w)
-	defer c.unsetWriter(w)
+	n, err = fmt.Fprint(w, a...)
+	c.unsetWriter(w)
 
-	return fmt.Fprint(w, a...)
+	return n, err
 }
 
 // Print formats using the default formats for its operands and writes to
@@ -206,9 +207,10 @@ func (c *Color) Fprint(w io.Writer, a ...interface{}) (n int, err error) {
 // color.
 func (c *Color) Print(a ...interface{}) (n int, err error) {
 	c.Set()
-	defer c.unset()
+	n, err = fmt.Fprint(Output, a...)
+	c.unset()
 
-	return fmt.Fprint(Output, a...)
+	return n, err
 }
 
 // Fprintf formats according to a format specifier and writes to w.
@@ -217,9 +219,10 @@ func (c *Color) Print(a ...interface{}) (n int, err error) {
 // type *os.File.
 func (c *Color) Fprintf(w io.Writer, format string, a ...interface{}) (n int, err error) {
 	c.setWriter(w)
-	defer c.unsetWriter(w)
+	n, err = fmt.Fprintf(w, format, a...)
+	c.unsetWriter(w)
 
-	return fmt.Fprintf(w, format, a...)
+	return n, err
 }
 
 // Printf formats according to a format specifier and writes to standard output.
@@ -227,9 +230,10 @@ func (c *Color) Fprintf(w io.Writer, format string, a ...interface{}) (n int, er
 // This is the standard fmt.Printf() method wrapped with the given color.
 func (c *Color) Printf(format string, a ...interface{}) (n int, err error) {
 	c.Set()
-	defer c.unset()
+	n, err = fmt.Fprintf(Output, format, a...)
+	c.unset()
 
-	return fmt.Fprintf(Output, format, a...)
+	return n, err
 }
 
 // Fprintln formats using the default formats for its operands and writes to w.
@@ -238,9 +242,10 @@ func (c *Color) Printf(format string, a ...interface{}) (n int, err error) {
 // type *os.File.
 func (c *Color) Fprintln(w io.Writer, a ...interface{}) (n int, err error) {
 	c.setWriter(w)
-	defer c.unsetWriter(w)
+	n, err = fmt.Fprintln(w, a...)
+	c.unsetWriter(w)
 
-	return fmt.Fprintln(w, a...)
+	return n, err
 }
 
 // Println formats using the default formats for its operands and writes to
@@ -250,9 +255,10 @@ func (c *Color) Fprintln(w io.Writer, a ...interface{}) (n int, err error) {
 // color.
 func (c *Color) Println(a ...interface{}) (n int, err error) {
 	c.Set()
-	defer c.unset()
+	n, err = fmt.Fprintln(Output, a...)
+	c.unset()
 
-	return fmt.Fprintln(Output, a...)
+	return n, err
 }
 
 // Sprint is just like Print, but returns a string instead of printing it.
