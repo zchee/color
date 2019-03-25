@@ -13,8 +13,9 @@ import (
 	"github.com/zchee/color"
 )
 
+const length = int64(1024)
+
 func BenchmarkNewPrint(b *testing.B) {
-	const length = int64(1024)
 	color.Output = ioutil.Discard
 	color.NoColor = false
 
@@ -22,9 +23,15 @@ func BenchmarkNewPrint(b *testing.B) {
 }
 
 func BenchmarkColorPrint(b *testing.B) {
-	const length = int64(1024)
 	color.Output = ioutil.Discard
 	color.NoColor = false
 
 	benchmarkColorPrint(b, color.Magenta, length)
+}
+
+func BenchmarkColorString(b *testing.B) {
+	color.Output = ioutil.Discard
+	color.NoColor = false
+
+	benchmarkColorString(b, color.RedString, length)
 }

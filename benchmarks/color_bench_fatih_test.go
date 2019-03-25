@@ -13,8 +13,9 @@ import (
 	fatihcolor "github.com/fatih/color"
 )
 
+const length = int64(1024)
+
 func BenchmarkNewPrint(b *testing.B) {
-	const length = int64(1024)
 	fatihcolor.Output = ioutil.Discard
 	fatihcolor.NoColor = false
 
@@ -22,9 +23,15 @@ func BenchmarkNewPrint(b *testing.B) {
 }
 
 func BenchmarkColorPrint(b *testing.B) {
-	const length = int64(1024)
 	fatihcolor.Output = ioutil.Discard
 	fatihcolor.NoColor = false
 
 	benchmarkColorPrint(b, fatihcolor.Magenta, length)
+}
+
+func BenchmarkColorString(b *testing.B) {
+	fatihcolor.Output = ioutil.Discard
+	fatihcolor.NoColor = false
+
+	benchmarkColorString(b, fatihcolor.RedString, length)
 }
