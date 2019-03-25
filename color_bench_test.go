@@ -9,10 +9,11 @@ import (
 	"io/ioutil"
 	"testing"
 
+	fatihcolor "github.com/fatih/color"
 	"github.com/zchee/color"
 )
 
-func BenchmarkColor(b *testing.B) {
+func BenchmarkZcheeColor(b *testing.B) {
 	const length = int64(1024)
 
 	color.Output = ioutil.Discard
@@ -25,6 +26,23 @@ func BenchmarkColor(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			color.New(color.FgGreen).Print(string(buf))
+		}
+	})
+}
+
+func BenchmarkFatihColor(b *testing.B) {
+	const length = int64(1024)
+
+	fatihcolor.Output = ioutil.Discard
+	fatihcolor.NoColor = false
+
+	buf := genRandomBytes(b, length)
+	b.SetBytes(length)
+
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			fatihcolor.New(fatihcolor.FgGreen).Print(string(buf))
 		}
 	})
 }
