@@ -13,10 +13,18 @@ import (
 	fatihcolor "github.com/fatih/color"
 )
 
-func BenchmarkColor(b *testing.B) {
+func BenchmarkNewPrint(b *testing.B) {
 	const length = int64(1024)
 	fatihcolor.Output = ioutil.Discard
 	fatihcolor.NoColor = false
 
 	benchmarkNewPrint(b, fatihcolor.New(fatihcolor.FgGreen).Print, length)
+}
+
+func BenchmarkColorPrint(b *testing.B) {
+	const length = int64(1024)
+	fatihcolor.Output = ioutil.Discard
+	fatihcolor.NoColor = false
+
+	benchmarkColorPrint(b, fatihcolor.Magenta, length)
 }

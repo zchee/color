@@ -35,3 +35,17 @@ func benchmarkNewPrint(b *testing.B, fn printFunc, length int64) {
 		}
 	})
 }
+
+type colorPrintFunc func(format string, a ...interface{})
+
+func benchmarkColorPrint(b *testing.B, fn colorPrintFunc, length int64) {
+	buf := genRandomBytes(b, length)
+	b.SetBytes(length)
+
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			fn(string(buf))
+		}
+	})
+}
