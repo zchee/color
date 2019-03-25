@@ -167,7 +167,7 @@ c.Println("This prints again cyan...")
 Run benchmarks:
 
 ```sh
-$ pushd benchmarks; go test -v -tags=benchmark -run='^$' -bench=. -benchmem .; popd
+$ rm -f old.txt new.txt; pushd benchmarks; go test -v -tags=benchmark_fatih -run='^$' -count 5 -bench=. -benchmem . | tee ../old.txt; go test -v -tags=benchmark -run='^$' -count 5 -bench=.a -benchmem . | tee ../new.txt; popd; benchstat old.txt new.txt
 ```
 
 ## Todo
