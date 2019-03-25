@@ -1,48 +1,40 @@
 version: 2.1
 
 orbs:
-  executor: cci-orb/golang@dev:master-5c90288
+  golang: cci-orb/golang@0.0.6
 
 defaults: &defaults
-  executor: executor/stretch
+  executor: golang/stretch
   environment:
     GO111MODULE: 'on'
   working_directory: /go/src/github.com/zchee/color
-
-commands:
-  gomod:
-    steps:
-      - restore_cache:
-          keys:
-            - go-mod-v0-{{ checksum "go.sum" }}
-      - run:
-          name: Download go module dependencies and fetch to vender directory
-          command: |
-            go mod download
-            go mod vendor -v
-      - save_cache:
-          key: go-mod-v0-{{ checksum "go.sum" }}
-          paths:
-            - '/go/pkg/mod'
-            - '/go/src/github.com/zchee/color/vendor'
 
 jobs:
   test:
     <<: *defaults
     steps:
       - checkout
-      - gomod
+      - golang/gomod
+      - run:
+          name: Install go-junit-report binary
+          command: |
+            GO111MODULE=off go get -u github.com/jstemmer/go-junit-report
       - run:
           name: Take test coverage and output test results to junit syntax
           command: |
-            mkdir -p test-results
-            go test -v -race -covermode=atomic -coverpkg=./... -coverprofile=coverage.out $(go list -f='{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./...) 2>&1 | tee /dev/stderr | go-junit-report -set-exit-code > test-results/report.xml
+            mkdir -p /tmp/ci/artifacts /tmp/ci/test-results
+            go test -v -race -covermode=atomic -coverpkg=./... -coverprofile=/tmp/ci/artifacts/coverage.out ./... 2>&1 | tee /dev/stderr | go-junit-report -set-exit-code > /tmp/ci/test-results/junit.xml
+            if [[ -f '/tmp/ci/artifacts/coverage.out' ]]; then go tool cover -html=/tmp/ci/artifacts/coverage.out -o /tmp/ci/artifacts/coverage.html; fi
       - run:
           name: Upload test coverages to codecov.io
           command: |
-            bash <(curl -s https://codecov.io/bash) -Z -f coverage.out
+            bash <(curl -s https://codecov.io/bash) -f /tmp/ci/artifacts/coverage.out
+      - store_artifacts:
+          path: /tmp/ci/artifacts
+      - store_artifacts:
+          path: /tmp/ci/artifacts
       - store_test_results:
-          path: test-results
+          path: /tmp/ci/test-results
 
 workflows:
   version: 2
