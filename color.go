@@ -8,8 +8,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"sync/atomic"
 
 	colorable "github.com/mattn/go-colorable"
@@ -36,14 +38,24 @@ var (
 	colorsCache atomic.Value
 )
 
-func init() {
-	colorsCache.Store(make(map[Attribute]*Color))
-}
-
 // Color defines a custom color object which is defined by SGR parameters.
 type Color struct {
 	params  []Attribute
 	noColor *bool
+}
+
+var colorPool = sync.Pool{
+	New: func() interface{} {
+		return &Color{params: make([]Attribute, 0, 2)}
+	},
+}
+
+func init() {
+	colorsCache.Store(make(map[Attribute]*Color))
+
+	for i := 0; i < 63; i++ {
+		colorPool.Put(&Color{params: make([]Attribute, 0, 2)})
+	}
 }
 
 // Attribute defines a single SGR Code
@@ -115,9 +127,18 @@ const (
 
 // New returns a newly created color object.
 func New(value ...Attribute) *Color {
-	c := &Color{params: make([]Attribute, 0)}
+	c := colorPool.Get().(*Color)
 	c.Add(value...)
+
+	runtime.SetFinalizer(c, (*Color).put)
+
 	return c
+}
+
+// put reset c.params and puts colorPool.
+func (c *Color) put() {
+	c.Reset()
+	colorPool.Put(c)
 }
 
 // Set sets the given parameters immediately. It will change the color of
