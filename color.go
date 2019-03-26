@@ -184,7 +184,8 @@ func (c *Color) Add(value ...Attribute) *Color {
 	return c
 }
 
-func (c *Color) prepend(value Attribute) {
+// Prepend prepends value Attribute to c.
+func (c *Color) Prepend(value Attribute) {
 	c.params = append(c.params, 0)
 	copy(c.params[1:], c.params[0:])
 	c.params[0] = value
