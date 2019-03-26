@@ -11,10 +11,10 @@ import (
 	"testing"
 )
 
-func genRandomBytes(tb testing.TB, length int64) []byte {
+func genRandomBytes(tb testing.TB, length int64) (b []byte) {
 	tb.Helper()
 
-	b := make([]byte, length)
+	b = make([]byte, length)
 	if _, err := crand.Read(b); err != nil {
 		tb.Fatal(err)
 	}
@@ -27,11 +27,12 @@ type printFunc func(...interface{}) (int, error)
 func benchmarkNewPrint(b *testing.B, fn printFunc, length int64) {
 	buf := genRandomBytes(b, length)
 	b.SetBytes(length)
-
+	b.ReportAllocs()
 	b.ResetTimer()
+
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			fn(string(buf))
+			fn(buf)
 		}
 	})
 }
@@ -39,13 +40,15 @@ func benchmarkNewPrint(b *testing.B, fn printFunc, length int64) {
 type colorPrintFunc func(format string, a ...interface{})
 
 func benchmarkColorPrint(b *testing.B, fn colorPrintFunc, length int64) {
+	const format = "buf: %x"
 	buf := genRandomBytes(b, length)
 	b.SetBytes(length)
-
+	b.ReportAllocs()
 	b.ResetTimer()
+
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			fn(string(buf))
+			fn(format, buf)
 		}
 	})
 }
@@ -53,13 +56,15 @@ func benchmarkColorPrint(b *testing.B, fn colorPrintFunc, length int64) {
 type colorStringFunc func(format string, a ...interface{}) string
 
 func benchmarkColorString(b *testing.B, fn colorStringFunc, length int64) {
+	const format = "buf: %x"
 	buf := genRandomBytes(b, length)
 	b.SetBytes(length)
-
+	b.ReportAllocs()
 	b.ResetTimer()
+
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_ = fn(string(buf))
+			_ = fn(format, buf)
 		}
 	})
 }
