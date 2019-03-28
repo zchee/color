@@ -130,13 +130,13 @@ func New(value ...Attribute) *Color {
 	c := colorPool.Get().(*Color)
 	c.Add(value...)
 
-	runtime.SetFinalizer(c, (*Color).put)
+	runtime.SetFinalizer(c, (*Color).Put)
 
 	return c
 }
 
-// put reset c.params and puts colorPool.
-func (c *Color) put() {
+// Put reset c.params and puts colorPool.
+func (c *Color) Put() {
 	c.Reset()
 	colorPool.Put(c)
 }
