@@ -24,7 +24,7 @@ bench/fatih:
 	@pushd benchmarks > /dev/null 2>&1; go test -v -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ../${GO_BENCH_OUTPUT}
 
 .PHONY: bench/compare
-bench/compare: bench
+bench/compare: clean bench
 	@benchstat benchmarks/old.golden.txt new.txt
 
 .PHONY: bench/cpu
@@ -49,4 +49,4 @@ bnech/trace: clean bench
 
 .PHONY: clean
 clean:
-	@$(RM) *.txt *.prof **/*.pprof
+	@$(RM) *.txt *.prof *.pprof
