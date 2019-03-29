@@ -47,3 +47,4 @@ coverage.*
 
 # benchmark
 *.txt
+!benchmarks/old.golden.txt
