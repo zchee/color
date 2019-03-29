@@ -6,46 +6,59 @@ package color
 
 func init() {
 	for i := 0; i < 107; i++ { // init pooled 64(default)+44(num of *Color cache)
-		colorPool.Put(&Color{params: make([]Attribute, 0, defaultAllocSize)})
+		colorPool.Put(&Color{params: make([]Attribute, allocMinSize, allocMaxSize)})
 	}
 
 	m := make(map[Attribute]*Color, 44) // Total for loop is 8+3(bold,italic,underline)*4 = 44
 
-	for fg := Attribute(30); fg < Attribute(38); fg++ {
+	const (
+		fgStart   = 30
+		fgEnd     = 38
+		fgHiStart = 90
+		fgHiEnd   = 98
+		bgStart   = 40
+		bgEnd     = 48
+		bgHiStart = 100
+		bgHiEnd   = 108
+	)
+
+	var attrs = []Attribute{1, 3, 4}
+
+	for fg := Attribute(fgStart); fg < Attribute(fgEnd); fg++ {
 		m[fg] = New(fg)
 
-		if fg == 38 {
-			for _, j := range []Attribute{1, 3, 4} {
+		if fg == fgEnd {
+			for _, j := range attrs {
 				m[fg+j] = New(fg + j)
 			}
 		}
 	}
 
-	for fghi := Attribute(90); fghi < Attribute(98); fghi++ {
+	for fghi := Attribute(fgHiStart); fghi < Attribute(fgHiEnd); fghi++ {
 		m[fghi] = New(fghi)
 
-		if fghi == 98 {
-			for _, j := range []Attribute{1, 3, 4} {
+		if fghi == fgHiEnd {
+			for _, j := range attrs {
 				m[fghi+j] = New(fghi + j)
 			}
 		}
 	}
 
-	for bg := Attribute(40); bg < Attribute(48); bg++ {
+	for bg := Attribute(bgStart); bg < Attribute(bgEnd); bg++ {
 		m[bg] = New(bg)
 
-		if bg == 48 {
-			for _, j := range []Attribute{1, 3, 4} {
+		if bg == bgEnd {
+			for _, j := range attrs {
 				m[bg+j] = New(bg + j)
 			}
 		}
 	}
 
-	for bghi := Attribute(100); bghi < Attribute(108); bghi++ {
+	for bghi := Attribute(bgHiStart); bghi < Attribute(bgHiEnd); bghi++ {
 		m[bghi] = New(bghi)
 
-		if bghi == 108 {
-			for _, j := range []Attribute{1, 3, 4} {
+		if bghi == bgHiEnd {
+			for _, j := range attrs {
 				m[bghi+j] = New(bghi + j)
 			}
 		}

@@ -44,11 +44,14 @@ type Color struct {
 	noColor *bool
 }
 
-const defaultAllocSize = 2
+const (
+	allocMinSize = 0
+	allocMaxSize = 2
+)
 
 var colorPool = sync.Pool{
 	New: func() interface{} {
-		return &Color{params: make([]Attribute, 0, defaultAllocSize)}
+		return &Color{params: make([]Attribute, allocMinSize, allocMaxSize)}
 	},
 }
 
