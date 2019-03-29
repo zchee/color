@@ -52,14 +52,6 @@ var colorPool = sync.Pool{
 	},
 }
 
-func init() {
-	colorsCache.Store(make(map[Attribute]*Color))
-
-	for i := 0; i < 63; i++ { // init pooled 64
-		colorPool.Put(&Color{params: make([]Attribute, 0, defaultAllocSize)})
-	}
-}
-
 // Attribute defines a single SGR Code
 type Attribute int
 
