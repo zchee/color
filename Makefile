@@ -2,7 +2,7 @@ SHELL = /usr/bin/env bash
 
 GO_TEST ?= go test
 GO_TAGS ?= benchmark
-GO_BENCH_FLAGS ?= -benchtime=2s -benchmem
+GO_BENCH_FLAGS ?= -benchtime=2s
 GO_BENCH_FUNCS ?= .
 GO_BENCH_CPUS ?= 1,4,12
 GO_BENCH_COUNT ?= 10
