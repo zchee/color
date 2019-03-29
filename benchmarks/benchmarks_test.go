@@ -8,6 +8,7 @@ package benchmarks_test
 
 import (
 	crand "crypto/rand"
+	"io"
 	"testing"
 )
 
@@ -22,9 +23,19 @@ func genRandomBytes(tb testing.TB, length int64) (b []byte) {
 	return b
 }
 
-type printFunc func(...interface{}) (int, error)
+type newPrintFunc interface {
+	Fprint(w io.Writer, a ...interface{}) (n int, err error)
+	Print(a ...interface{}) (n int, err error)
+	Fprintf(w io.Writer, format string, a ...interface{}) (n int, err error)
+	Printf(format string, a ...interface{}) (n int, err error)
+	Fprintln(w io.Writer, a ...interface{}) (n int, err error)
+	Println(a ...interface{}) (n int, err error)
+	Sprint(a ...interface{}) string
+	Sprintln(a ...interface{}) string
+	Sprintf(format string, a ...interface{}) string
+}
 
-func benchmarkNewPrint(b *testing.B, fn printFunc, length int64) {
+func benchmarkNewPrint(b *testing.B, fn newPrintFunc, length int64) {
 	buf := genRandomBytes(b, length)
 	b.SetBytes(length)
 	b.ReportAllocs()
@@ -32,14 +43,14 @@ func benchmarkNewPrint(b *testing.B, fn printFunc, length int64) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			fn(buf)
+			fn.Print(buf)
 		}
 	})
 }
 
-type colorPrintFunc func(format string, a ...interface{})
+type printFunc func(format string, a ...interface{})
 
-func benchmarkColorPrint(b *testing.B, fn colorPrintFunc, length int64) {
+func benchmarkColorPrint(b *testing.B, fn printFunc, length int64) {
 	const format = "buf: %x"
 	buf := genRandomBytes(b, length)
 	b.SetBytes(length)
@@ -53,9 +64,9 @@ func benchmarkColorPrint(b *testing.B, fn colorPrintFunc, length int64) {
 	})
 }
 
-type colorStringFunc func(format string, a ...interface{}) string
+type stringFunc func(format string, a ...interface{}) string
 
-func benchmarkColorString(b *testing.B, fn colorStringFunc, length int64) {
+func benchmarkColorString(b *testing.B, fn stringFunc, length int64) {
 	const format = "buf: %x"
 	buf := genRandomBytes(b, length)
 	b.SetBytes(length)

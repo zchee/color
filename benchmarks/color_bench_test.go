@@ -19,7 +19,7 @@ func BenchmarkNewPrint(b *testing.B) {
 	color.Output = ioutil.Discard
 	color.NoColor = false
 
-	benchmarkNewPrint(b, color.New(color.FgGreen).Print, length)
+	benchmarkNewPrint(b, color.New(color.FgGreen), length)
 }
 
 func BenchmarkColorPrint(b *testing.B) {
