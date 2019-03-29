@@ -44,17 +44,19 @@ type Color struct {
 	noColor *bool
 }
 
+const defaultAllocSize = 2
+
 var colorPool = sync.Pool{
 	New: func() interface{} {
-		return &Color{params: make([]Attribute, 0, 2)}
+		return &Color{params: make([]Attribute, 0, defaultAllocSize)}
 	},
 }
 
 func init() {
 	colorsCache.Store(make(map[Attribute]*Color))
 
-	for i := 0; i < 63; i++ {
-		colorPool.Put(&Color{params: make([]Attribute, 0, 2)})
+	for i := 0; i < 63; i++ { // init pooled 64
+		colorPool.Put(&Color{params: make([]Attribute, 0, defaultAllocSize)})
 	}
 }
 
