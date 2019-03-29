@@ -24,8 +24,8 @@ bench/fatih:
 	@pushd benchmarks > /dev/null 2>&1; go test -v -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ../${GO_BENCH_OUTPUT}
 
 .PHONY: bench/compare
-bench/compare: bench/fatih bench
-	@benchstat old.txt new.txt
+bench/compare: bench
+	@benchstat benchmarks/old.golden.txt new.txt
 
 .PHONY: bench/cpu
 bench/cpu: GO_BENCH_FLAGS+=-cpuprofile=cpu.pprof
