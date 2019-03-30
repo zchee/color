@@ -26,12 +26,34 @@ func BenchmarkColorPrint(b *testing.B) {
 	color.Output = ioutil.Discard
 	color.NoColor = false
 
-	benchmarkColorPrint(b, color.Magenta, length)
+	var fns = printFuncs{
+		color.Black,
+		color.Red,
+		color.Green,
+		color.Yellow,
+		color.Blue,
+		color.Magenta,
+		color.Cyan,
+		color.White,
+	}
+
+	benchmarkColorPrint(b, fns, length)
 }
 
 func BenchmarkColorString(b *testing.B) {
 	color.Output = ioutil.Discard
 	color.NoColor = false
 
-	benchmarkColorString(b, color.RedString, length)
+	var fns = stringFuncs{
+		color.BlackString,
+		color.RedString,
+		color.GreenString,
+		color.YellowString,
+		color.BlueString,
+		color.MagentaString,
+		color.CyanString,
+		color.WhiteString,
+	}
+
+	benchmarkColorString(b, fns, length)
 }

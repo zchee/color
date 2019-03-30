@@ -26,12 +26,34 @@ func BenchmarkColorPrint(b *testing.B) {
 	fatihcolor.Output = ioutil.Discard
 	fatihcolor.NoColor = false
 
-	benchmarkColorPrint(b, fatihcolor.Magenta, length)
+	var fns = printFuncs{
+		fatihcolor.Black,
+		fatihcolor.Red,
+		fatihcolor.Green,
+		fatihcolor.Yellow,
+		fatihcolor.Blue,
+		fatihcolor.Magenta,
+		fatihcolor.Cyan,
+		fatihcolor.White,
+	}
+
+	benchmarkColorPrint(b, fns, length)
 }
 
 func BenchmarkColorString(b *testing.B) {
 	fatihcolor.Output = ioutil.Discard
 	fatihcolor.NoColor = false
 
-	benchmarkColorString(b, fatihcolor.RedString, length)
+	var fns = stringFuncs{
+		fatihcolor.BlackString,
+		fatihcolor.RedString,
+		fatihcolor.GreenString,
+		fatihcolor.YellowString,
+		fatihcolor.BlueString,
+		fatihcolor.MagentaString,
+		fatihcolor.CyanString,
+		fatihcolor.WhiteString,
+	}
+
+	benchmarkColorString(b, fns, length)
 }
