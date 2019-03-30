@@ -6,7 +6,8 @@ GO_BENCH_FLAGS ?= -benchtime=2s
 GO_BENCH_FUNCS ?= .
 GO_BENCH_CPUS ?= 1,4,12
 GO_BENCH_COUNT ?= 10
-GO_BENCH_OUTPUT ?= bench.txt
+GO_BENCH_OUTPUT ?= ../new.txt
+GO_BENCH_WORKING_DIRECTORY ?= ./benchmarks
 
 define target
 @printf "\\x1b[1;32m$(patsubst ,$@,$(1))\\x1b[0m\\n"
@@ -16,25 +17,29 @@ endef
 test:
 	@${GO_TEST} -v -race ./...
 
+.PHONY: bench/base
+bench/base:
+	$(call target,${TARGET})
+	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go test -v -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ${GO_BENCH_OUTPUT}
+
 .PHONY: bench
-bench: GO_BENCH_OUTPUT=new.txt
-bench:
-	$(call target)
-	@pushd benchmarks > /dev/null 2>&1; go test -v -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ../${GO_BENCH_OUTPUT}
+bench: TARGET=bench
+bench: bench/base
 
 .PHONY: bench/fatih
 bench/fatih: GO_TAGS=benchmark_fatih
-bench/fatih: GO_BENCH_OUTPUT=old.txt
-bench/fatih:
-	$(call target)
-	@pushd benchmarks > /dev/null 2>&1; go test -v -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ../${GO_BENCH_OUTPUT}
+bench/fatih: GO_BENCH_OUTPUT=../old.txt
+bench/fatih: TARGET=bench/fatih
+bench/fatih: bench/base
 
-.PHONY: bench/compare
-bench/compare: clean bench
-	@benchstat benchmarks/old.golden.txt new.txt
+.PHONY: benchstat
+benchstat: clean bench
+	@benchstat benchmarks/old.golden.txt $(shell echo ${GO_BENCH_OUTPUT} | cut -d/ -f2)
 
-.PHONY: bench/compare/new
-bench/compare/new: clean bench/fatih bench
+.PHONY: benchstat/new
+benchstat/new: clean
+	@${MAKE} --silent bench/fatih
+	@${MAKE} --silent bench
 	@benchstat old.txt new.txt
 
 .PHONY: bench/cpu
