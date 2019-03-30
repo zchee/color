@@ -8,6 +8,10 @@ GO_BENCH_CPUS ?= 1,4,12
 GO_BENCH_COUNT ?= 10
 GO_BENCH_OUTPUT ?= bench.txt
 
+define target
+@printf "\\x1b[1;32m$(patsubst ,$@,$(1))\\x1b[0m\\n"
+endef
+
 .PHONY: test
 test:
 	@${GO_TEST} -v -race ./...
@@ -15,17 +19,23 @@ test:
 .PHONY: bench
 bench: GO_BENCH_OUTPUT=new.txt
 bench:
+	$(call target)
 	@pushd benchmarks > /dev/null 2>&1; go test -v -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ../${GO_BENCH_OUTPUT}
 
 .PHONY: bench/fatih
 bench/fatih: GO_TAGS=benchmark_fatih
 bench/fatih: GO_BENCH_OUTPUT=old.txt
 bench/fatih:
+	$(call target)
 	@pushd benchmarks > /dev/null 2>&1; go test -v -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ../${GO_BENCH_OUTPUT}
 
 .PHONY: bench/compare
 bench/compare: clean bench
 	@benchstat benchmarks/old.golden.txt new.txt
+
+.PHONY: bench/compare/new
+bench/compare/new: clean bench/fatih bench
+	@benchstat old.txt new.txt
 
 .PHONY: bench/cpu
 bench/cpu: GO_BENCH_FLAGS+=-cpuprofile=cpu.pprof
