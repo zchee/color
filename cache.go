@@ -31,8 +31,8 @@ func init() {
 	} {
 		start := attrs[0]
 		end := attrs[1]
-		for i := start; i < end; i++ {
-			m[i] = New(i)
+		for attr := start; attr < end; attr++ {
+			m[attr] = New(attr)
 		}
 	}
 
