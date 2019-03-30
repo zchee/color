@@ -61,7 +61,10 @@ var colorPool sync.Pool = sync.Pool{
 // Attribute defines a single SGR Code
 type Attribute int
 
-const escape = "\x1b"
+const (
+	escapePrefix = "\x1b["
+	escapeSuffix = "m"
+)
 
 // Base attributes
 const (
@@ -247,7 +250,7 @@ func Unset() {
 		return
 	}
 
-	fmt.Fprintf(Output, "%s[%dm", escape, Reset)
+	Output.Write(unsafeToSlice(escapePrefix + Reset.String() + escapeSuffix))
 }
 
 // Set sets the SGR sequence.
@@ -286,7 +289,7 @@ func (c *Color) unsetWriter(w io.Writer) {
 		return
 	}
 
-	fmt.Fprintf(w, "%s[%dm", escape, Reset)
+	w.Write(unsafeToSlice(escapePrefix + Reset.String() + escapeSuffix))
 }
 
 // Add is used to chain SGR parameters. Use as many as parameters to combine
@@ -479,8 +482,8 @@ func (c *Color) SprintlnFunc() func(a ...interface{}) string {
 // an example output might be: "1;36" -> bold cyan
 func (c *Color) sequence() string {
 	format := make([]string, len(c.params))
-	for i, v := range c.params {
-		format[i] = strconv.Itoa(int(v))
+	for i, attr := range c.params {
+		format[i] = attr.String()
 	}
 
 	return strings.Join(format, ";")
@@ -497,11 +500,11 @@ func (c *Color) wrap(s string) string {
 }
 
 func (c *Color) format() string {
-	return fmt.Sprintf("%s[%sm", escape, c.sequence())
+	return escapePrefix + c.sequence() + escapeSuffix
 }
 
 func (c *Color) unformat() string {
-	return fmt.Sprintf("%s[%dm", escape, Reset)
+	return escapePrefix + Reset.String() + escapeSuffix
 }
 
 // DisableColor disables the color output. Useful to not change any existing
