@@ -36,5 +36,5 @@ func init() {
 		}
 	}
 
-	colorsCache.Store(m)
+	colorsCache.Put(m)
 }

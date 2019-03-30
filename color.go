@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"sync/atomic"
 
 	colorable "github.com/mattn/go-colorable"
 	isatty "github.com/mattn/go-isatty"
@@ -32,11 +31,15 @@ var (
 
 	// Error defines a color supporting writer for os.Stderr.
 	Error = colorable.NewColorableStderr()
-
-	// colorsCache is used to reduce the count of created Color objects and
-	// allows to reuse already created objects with required Attribute.
-	colorsCache atomic.Value
 )
+
+// colorsCache is used to reduce the count of created Color objects and
+// allows to reuse already created objects with required Attribute using intern sync.Pool pattern.
+var colorsCache sync.Pool = sync.Pool{
+	New: func() interface{} {
+		return make(map[Attribute]*Color)
+	},
+}
 
 // Color defines a custom color object which is defined by SGR parameters.
 type Color struct {
@@ -49,7 +52,7 @@ const (
 	allocMaxSize = 2
 )
 
-var colorPool = sync.Pool{
+var colorPool sync.Pool = sync.Pool{
 	New: func() interface{} {
 		return &Color{params: make([]Attribute, allocMinSize, allocMaxSize)}
 	},
@@ -123,8 +126,8 @@ const (
 )
 
 // New returns a newly created color object.
-func New(value ...Attribute) *Color {
-	c := colorPool.Get().(*Color)
+func New(value ...Attribute) (c *Color) {
+	c = colorPool.Get().(*Color)
 	c.Add(value...)
 
 	runtime.SetFinalizer(c, (*Color).Put)
@@ -462,14 +465,17 @@ func boolPtr(v bool) *bool {
 	return &v
 }
 
-func getCachedColor(p Attribute) *Color {
-	cache := colorsCache.Load().(map[Attribute]*Color)
-	c, ok := cache[p]
-	if !ok {
-		c = New(p)
-		cache[p] = c
-		colorsCache.Store(cache)
+func getCachedColor(p Attribute) (c *Color) {
+	m := colorsCache.Get().(map[Attribute]*Color)
+	c, ok := m[p]
+	if ok {
+		colorsCache.Put(m)
+		return c
 	}
+
+	c = New(p)
+	m[p] = c
+	colorsCache.Put(m)
 
 	return c
 }
