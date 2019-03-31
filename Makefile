@@ -20,7 +20,7 @@ test:
 .PHONY: bench/base
 bench/base:
 	$(call target,${TARGET})
-	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go mod vendor -v
+	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go mod vendor
 	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go test -v -mod=vendor -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ${GO_BENCH_OUTPUT}
 
 .PHONY: bench
@@ -44,25 +44,30 @@ benchstat/new: clean
 	@benchstat old.txt new.txt
 
 .PHONY: bench/cpu
-bench/cpu: GO_BENCH_FLAGS+=-cpuprofile=cpu.pprof
-bench/cpu: clean bnech
+bench/cpu: GO_BENCH_OUTPUT=/dev/null
+bench/cpu: GO_BENCH_FLAGS+=-cpuprofile=../cpu.prof
+bench/cpu: clean bench
 
 .PHONY: bench/mem
-bench/mem: GO_BENCH_FLAGS+=-memprofile=mem.pprof
+bench/mem: GO_BENCH_OUTPUT=/dev/null
+bench/mem: GO_BENCH_FLAGS+=-memprofile=../mem.prof
 bench/mem: clean bench
 
-.PHONY: bnech/mutex
-bnech/mutex: GO_BENCH_FLAGS+=-mutexprofile=mutex.pprof
-bnech/mutex: clean bench
+.PHONY: bench/mutex
+bench/mutex: GO_BENCH_OUTPUT=/dev/null
+bench/mutex: GO_BENCH_FLAGS+=-mutexprofile=../mutex.prof
+bench/mutex: clean bench
 
-.PHONY: bnech/block
-bnech/block: GO_BENCH_FLAGS+=-blockprofile=block.pprof
-bnech/block: clean bench
+.PHONY: bench/block
+bench/block: GO_BENCH_OUTPUT=/dev/null
+bench/block: GO_BENCH_FLAGS+=-blockprofile=../block.prof
+bench/block: clean bench
 
-.PHONY: bnech/trace
-bnech/trace: GO_BENCH_FLAGS+=-trace=trace.out
-bnech/trace: clean bench
+.PHONY: bench/trace
+bench/trace: GO_BENCH_OUTPUT=/dev/null
+bench/trace: GO_BENCH_FLAGS+=-trace=../trace.prof
+bench/trace: clean bench
 
 .PHONY: clean
 clean:
-	@$(RM) *.txt *.prof *.pprof
+	@$(RM) *.txt *.prof
