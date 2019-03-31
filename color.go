@@ -331,11 +331,7 @@ func (c *Color) setWriter(w io.Writer) *Color {
 }
 
 func (c *Color) unsetWriter(w io.Writer) {
-	if c.isNoColorSet() {
-		return
-	}
-
-	if NoColor {
+	if c.isNoColorSet() || NoColor {
 		return
 	}
 
