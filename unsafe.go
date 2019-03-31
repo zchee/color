@@ -17,12 +17,11 @@ func unsafeToSlice(s string) (b []byte) {
 	}
 
 	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	bh := &reflect.SliceHeader{
+	b = *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
 		Data: sh.Data,
 		Len:  sh.Len,
 		Cap:  sh.Len,
-	}
-	b = *(*[]byte)(unsafe.Pointer(bh))
+	}))
 
 	return
 }
