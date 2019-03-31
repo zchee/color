@@ -2,10 +2,11 @@ SHELL = /usr/bin/env bash
 
 GO_TEST ?= go test
 GO_TAGS ?= benchmark
-GO_BENCH_FLAGS ?= -benchtime=2s
 GO_BENCH_FUNCS ?= .
 GO_BENCH_CPUS ?= 1,4,12
 GO_BENCH_COUNT ?= 10
+GO_BENCH_TIME ?= .1s
+GO_BENCH_FLAGS ?= -benchtime=${GO_BENCH_TIME}
 GO_BENCH_OUTPUT ?= ../new.txt
 GO_BENCH_WORKING_DIRECTORY ?= ./benchmarks
 
@@ -21,7 +22,7 @@ test:
 bench/base:
 	$(call target,${TARGET})
 	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go mod vendor
-	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go test -v -mod=vendor -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ${GO_BENCH_OUTPUT}
+	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go test -v -mod=vendor -tags=${GO_TAGS} -cpu=${GO_BENCH_CPUS} -count=${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ${GO_BENCH_OUTPUT}
 
 .PHONY: bench
 bench: TARGET=bench
@@ -58,10 +59,12 @@ bench/block: GO_BENCH_FLAGS+=-blockprofile=../block.prof
 bench/block: clean bench
 
 .PHONY: bench/trace
-bench/trace: GO_BENCH_OUTPUT=/dev/null
-bench/trace: GO_BENCH_FLAGS+=-trace=../trace.prof
-bench/trace: clean bench
+bench/trace: GO_BENCH_OUTPUT=../trace.prof
+bench/trace: GO_BENCH_TIME=10ms
+bench/trace:
+	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go mod vendor
+	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go test -v -mod=vendor -tags=${GO_TAGS} -c && GODEBUG=allocfreetrace=1 ./benchmarks.test -test.run='^$$' -test.count=${GO_BENCH_COUNT} -test.bench=${GO_BENCH_FUNCS} -test.benchtime=${GO_BENCH_TIME} 2> ${GO_BENCH_OUTPUT}
 
 .PHONY: clean
 clean:
-	@$(RM) *.txt *.prof
+	@$(RM) *.txt *.prof **/*.test
