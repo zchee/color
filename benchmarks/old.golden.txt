@@ -1,95 +1,95 @@
 goos: darwin
 goarch: amd64
 pkg: github.com/zchee/color/benchmarks
-BenchmarkNewPrint          	  126942	     18633 ns/op	  54.96 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  124442	     18710 ns/op	  54.73 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  131505	     18679 ns/op	  54.82 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  125114	     18423 ns/op	  55.58 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  137385	     18808 ns/op	  54.45 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  135406	     18742 ns/op	  54.64 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  125437	     18687 ns/op	  54.80 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  125888	     19276 ns/op	  53.12 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  128782	     18838 ns/op	  54.36 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint          	  118716	     19469 ns/op	  52.60 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  480279	      5409 ns/op	 189.33 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  396572	      5593 ns/op	 183.08 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  422857	      6168 ns/op	 166.03 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  358359	      6323 ns/op	 161.94 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  392070	      6161 ns/op	 166.20 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  407812	      6266 ns/op	 163.42 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  395978	      6132 ns/op	 166.98 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  378075	      6202 ns/op	 165.12 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  392220	      6102 ns/op	 167.82 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-4        	  411060	      6260 ns/op	 163.57 MB/s	      85 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  735610	      3964 ns/op	 258.33 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  608344	      4077 ns/op	 251.15 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  607720	      3986 ns/op	 256.87 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  664701	      3940 ns/op	 259.92 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  510750	      4019 ns/op	 254.76 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  503296	      4000 ns/op	 255.98 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  556652	      4033 ns/op	 253.93 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  599092	      4047 ns/op	 253.02 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  561262	      4007 ns/op	 255.56 MB/s	      86 B/op	       5 allocs/op
-BenchmarkNewPrint-12       	  650061	      3910 ns/op	 261.92 MB/s	      86 B/op	       5 allocs/op
-BenchmarkColorPrint        	  739825	      2837 ns/op	 360.94 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	 1000000	      2739 ns/op	 373.90 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	 1000000	      2650 ns/op	 386.48 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	  970057	      2668 ns/op	 383.82 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	  962509	      2736 ns/op	 374.27 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	 1000000	      2654 ns/op	 385.83 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	  887156	      2614 ns/op	 391.72 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	 1000000	      2606 ns/op	 392.89 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	  881998	      2655 ns/op	 385.65 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint        	 1000000	      2662 ns/op	 384.72 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 3337742	       833 ns/op	1229.07 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 2440539	       927 ns/op	1104.54 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 2631546	       921 ns/op	1112.01 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 2661642	       865 ns/op	1183.53 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 2649348	       878 ns/op	1166.87 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 2935042	       854 ns/op	1198.88 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 2849923	       837 ns/op	1222.90 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 2935228	       832 ns/op	1230.41 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 3052086	       832 ns/op	1231.13 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-4      	 2734407	       887 ns/op	1153.82 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 4044124	       720 ns/op	1422.46 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 3574868	       739 ns/op	1385.56 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 3135578	       752 ns/op	1362.19 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 3303003	       791 ns/op	1294.21 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 3166486	       781 ns/op	1310.98 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 2633630	       800 ns/op	1279.42 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 3311050	       816 ns/op	1255.01 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 3024091	       758 ns/op	1351.51 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 3146900	       774 ns/op	1323.27 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorPrint-12     	 3308815	       741 ns/op	1382.80 MB/s	      96 B/op	       6 allocs/op
-BenchmarkColorString       	  444927	      5194 ns/op	 197.16 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  498732	      4610 ns/op	 222.14 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  557679	      4236 ns/op	 241.72 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  615510	      3828 ns/op	 267.49 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  667852	      3603 ns/op	 284.22 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  688392	      3467 ns/op	 295.32 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  657921	      3394 ns/op	 301.70 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  724501	      3364 ns/op	 304.43 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  737338	      3497 ns/op	 292.83 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString       	  781914	      3432 ns/op	 298.36 MB/s	    4724 B/op	       9 allocs/op
-BenchmarkColorString-4     	 2134513	      1131 ns/op	 905.07 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-4     	 2180278	      1250 ns/op	 818.94 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-4     	 1899594	      1372 ns/op	 746.55 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-4     	 1842922	      1431 ns/op	 715.56 MB/s	    4736 B/op	       9 allocs/op
-BenchmarkColorString-4     	 1781966	      1416 ns/op	 723.20 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-4     	 1799929	      1423 ns/op	 719.45 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-4     	 1784767	      1392 ns/op	 735.65 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-4     	 1682170	      1427 ns/op	 717.73 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-4     	 1640428	      1428 ns/op	 717.26 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-4     	 1652494	      1432 ns/op	 715.08 MB/s	    4737 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1591525	      1438 ns/op	 711.90 MB/s	    4762 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1535672	      1502 ns/op	 681.64 MB/s	    4760 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1520415	      1546 ns/op	 662.22 MB/s	    4764 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1476628	      1506 ns/op	 680.06 MB/s	    4763 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1548470	      1527 ns/op	 670.40 MB/s	    4764 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1496482	      1551 ns/op	 660.03 MB/s	    4763 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1572530	      1576 ns/op	 649.65 MB/s	    4762 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1416118	      1601 ns/op	 639.64 MB/s	    4761 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1438929	      1552 ns/op	 659.58 MB/s	    4765 B/op	       9 allocs/op
-BenchmarkColorString-12    	 1444176	      1519 ns/op	 674.13 MB/s	    4766 B/op	       9 allocs/op
+BenchmarkNewPrint          	  133929	     18538 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  138348	     18565 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  123942	     18742 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  132296	     19268 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  133448	     18888 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  123440	     18835 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  126217	     19040 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  123972	     18902 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  133078	     19292 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint          	  116859	     19228 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  492066	      5584 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  447159	      5737 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  363975	      6409 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  394891	      6226 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  345327	      6294 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  367136	      6338 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  400398	      6173 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  368104	      6269 ns/op	      85 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  402255	      6172 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-4        	  352750	      6198 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  690745	      3956 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  528104	      4179 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  557392	      4065 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  670827	      4129 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  587812	      3957 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  679428	      4127 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  677084	      4130 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  614558	      4038 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  503364	      4151 ns/op	      86 B/op	       5 allocs/op
+BenchmarkNewPrint-12       	  545574	      4164 ns/op	      86 B/op	       5 allocs/op
+BenchmarkColorPrint        	  731292	      2807 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	 1000000	      2726 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	  980047	      2682 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	  904000	      2656 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	  993258	      2628 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	  948241	      2725 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	 1000000	      2612 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	  933190	      2553 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	 1000000	      2626 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint        	 1000000	      2606 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 3196263	       823 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2554087	       943 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2467995	       914 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2583432	       903 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2728352	       885 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2780943	       865 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2794880	       863 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2864574	       846 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2955926	       840 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-4      	 2882918	       829 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3875968	       634 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3534693	       642 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3467986	       643 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3558320	       629 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3649345	       636 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3702627	       633 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3643266	       641 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3583632	       642 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3639823	       645 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorPrint-12     	 3637543	       644 ns/op	      96 B/op	       6 allocs/op
+BenchmarkColorString       	  557623	      3764 ns/op	    4724 B/op	       9 allocs/op
+BenchmarkColorString       	  749008	      3629 ns/op	    4724 B/op	       9 allocs/op
+BenchmarkColorString       	  735478	      3633 ns/op	    4723 B/op	       9 allocs/op
+BenchmarkColorString       	  712342	      3639 ns/op	    4724 B/op	       9 allocs/op
+BenchmarkColorString       	  708747	      3578 ns/op	    4724 B/op	       9 allocs/op
+BenchmarkColorString       	  770871	      3585 ns/op	    4724 B/op	       9 allocs/op
+BenchmarkColorString       	  747385	      3549 ns/op	    4724 B/op	       9 allocs/op
+BenchmarkColorString       	  740719	      3621 ns/op	    4723 B/op	       9 allocs/op
+BenchmarkColorString       	  772230	      3511 ns/op	    4724 B/op	       9 allocs/op
+BenchmarkColorString       	  782259	      3513 ns/op	    4724 B/op	       9 allocs/op
+BenchmarkColorString-4     	 2065364	      1429 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1590859	      1530 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1658161	      1447 ns/op	    4738 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1716163	      1383 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1690836	      1359 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1734111	      1373 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1819713	      1339 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1882189	      1284 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1782382	      1290 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-4     	 1843342	      1302 ns/op	    4737 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1734326	      1447 ns/op	    4760 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1713669	      1420 ns/op	    4761 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1707307	      1365 ns/op	    4762 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1663809	      1389 ns/op	    4765 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1737157	      1494 ns/op	    4760 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1762254	      1446 ns/op	    4763 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1605979	      1673 ns/op	    4761 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1396496	      1723 ns/op	    4760 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1365961	      1805 ns/op	    4762 B/op	       9 allocs/op
+BenchmarkColorString-12    	 1300580	      1856 ns/op	    4762 B/op	       9 allocs/op
 PASS
-ok  	github.com/zchee/color/benchmarks	270.573s
+ok  	github.com/zchee/color/benchmarks	270.823s
