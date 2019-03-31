@@ -465,7 +465,7 @@ func (c *Color) Equals(c2 *Color) bool {
 	return true
 }
 
-func getCachedColor(p Attribute) (c *Color) {
+func getCacheColor(p Attribute) (c *Color) {
 	m := colorsCache.Get().(map[Attribute]*Color)
 	c, ok := m[p]
 	if ok {
@@ -481,7 +481,7 @@ func getCachedColor(p Attribute) (c *Color) {
 }
 
 func colorPrint(format string, p Attribute, a ...interface{}) {
-	c := getCachedColor(p)
+	c := getCacheColor(p)
 
 	if !strings.HasSuffix(format, "\n") {
 		format += "\n"
@@ -495,7 +495,7 @@ func colorPrint(format string, p Attribute, a ...interface{}) {
 }
 
 func colorString(format string, p Attribute, a ...interface{}) string {
-	c := getCachedColor(p)
+	c := getCacheColor(p)
 
 	if len(a) == 0 {
 		return c.SprintFunc()(format)
