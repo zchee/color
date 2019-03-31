@@ -27,14 +27,8 @@ bench/base:
 bench: TARGET=bench
 bench: bench/base
 
-.PHONY: bench/fatih
-bench/fatih: GO_TAGS=benchmark_fatih
-bench/fatih: GO_BENCH_OUTPUT=../old.txt
-bench/fatih: TARGET=bench/fatih
-bench/fatih: bench/base
-
 .PHONY: benchstat
-benchstat: clean bench
+benchstat: bench
 	@benchstat benchmarks/old.golden.txt $(shell echo ${GO_BENCH_OUTPUT} | cut -d/ -f2)
 
 .PHONY: benchstat/new
