@@ -10,9 +10,16 @@ import (
 	crand "crypto/rand"
 	"io"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 )
+
+func TestMain(m *testing.M) {
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	os.Exit(m.Run())
+}
 
 func genRandomBytes(tb testing.TB, length int64) (b []byte) {
 	tb.Helper()
@@ -49,8 +56,6 @@ func benchmarkNewPrint(b *testing.B, fn newPrintFunc, length int64) {
 	})
 }
 
-var randSrc = rand.NewSource(time.Now().UTC().UnixNano())
-
 const numPrintFunc = 8
 
 type printFuncs [numPrintFunc]func(format string, a ...interface{})
@@ -58,12 +63,11 @@ type printFuncs [numPrintFunc]func(format string, a ...interface{})
 func benchmarkColorPrint(b *testing.B, fn printFuncs, length int64) {
 	const format = "buf: %x"
 	buf := genRandomBytes(b, length)
-	r := rand.New(randSrc)
 
 	b.ReportAllocs()
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
-		n := r.Intn(numPrintFunc)
+		n := rand.Intn(numPrintFunc)
 		for pb.Next() {
 			fn[n](format, buf)
 		}
@@ -77,12 +81,11 @@ type stringFuncs [numstringFunc]func(format string, a ...interface{}) string
 func benchmarkColorString(b *testing.B, fn stringFuncs, length int64) {
 	const format = "buf: %x"
 	buf := genRandomBytes(b, length)
-	r := rand.New(randSrc)
 
 	b.ReportAllocs()
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
-		n := r.Intn(numPrintFunc)
+		n := rand.Intn(numstringFunc)
 		for pb.Next() {
 			_ = fn[n](format, buf)
 		}
