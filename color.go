@@ -57,13 +57,13 @@ var colorPool sync.Pool = sync.Pool{
 	},
 }
 
-// Attribute defines a single SGR Code
-type Attribute int
-
 const (
 	escapePrefix = "\x1b["
 	escapeSuffix = "m"
 )
+
+// Attribute defines a single SGR Code
+type Attribute int
 
 // Base attributes
 const (
