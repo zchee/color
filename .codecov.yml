@@ -14,6 +14,7 @@ coverage:
         target: 50%
         threshold: 10%
   ignore:
+    - "benchmarks"
     - "vendor"
 
 comment:
