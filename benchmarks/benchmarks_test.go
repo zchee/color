@@ -65,7 +65,7 @@ const numPrintFunc = 8
 type printFuncs [numPrintFunc]func(format string, a ...interface{})
 
 func benchmarkColorPrint(b *testing.B, fn printFuncs, length int64) {
-	const format = "buf: %x"
+	const format = "buf: %x\n"
 	buf := genRandomBytes(b, length)
 
 	b.ReportAllocs()
@@ -83,7 +83,7 @@ const numstringFunc = 8
 type stringFuncs [numstringFunc]func(format string, a ...interface{}) string
 
 func benchmarkColorString(b *testing.B, fn stringFuncs, length int64) {
-	const format = "buf: %x"
+	const format = "buf: %x\n"
 	buf := genRandomBytes(b, length)
 
 	b.ReportAllocs()
