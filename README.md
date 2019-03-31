@@ -13,8 +13,8 @@ suits you.
 
 ## Install
 
-```bash
-go get github.com/zchee/color
+```sh
+go get -u github.com/zchee/color
 ```
 
 Note that the `vendor` folder is here for stability. Remove the folder if you
