@@ -96,6 +96,6 @@ func (a Attribute) String() string {
 	case BgHiWhite:
 		return "107"
 	default:
-		return strconv.Itoa(int(a))
+		return strconv.FormatInt(int64(a), 10)
 	}
 }
