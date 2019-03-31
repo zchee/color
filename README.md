@@ -167,7 +167,10 @@ c.Println("This prints again cyan...")
 ### Run benchmark
 
 ```sh
-$ make benchstat/new
+$ cd ./benchmarks
+$ go test -v -tags=benchmark_fatih -cpu 1,4,12 -count 10 -run='^$' -bench=. -benchtime=2s . | tee old.txt
+$ go test -v -tags=benchmark -cpu 1,4,12 -count 10 -run='^$' -bench=. -benchtime=2s . | tee new.txt
+$ benchstat old.txt new.txt
 ```
 
 ### Benchmark result
@@ -220,21 +223,17 @@ L3 cache:                12M
 Flags:                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 cflsh ds acpi mmx fxsr sse sse2 ss htt tm pbe sse3 pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline aes xsave osxsave avx f16c rdrnd syscall nx pdpe1gb rdtscp lm lahf_lm lzcnt
 ```
 
-```console
-$ cd ./benchmarks
-$ go test -v -tags=benchmark_fatih -cpu 1,4,12 -count 10 -run='^$' -bench=. -benchtime=2s . | tee old.txt
-$ go test -v -tags=benchmark -cpu 1,4,12 -count 10 -run='^$' -bench=. -benchtime=2s . | tee new.txt
-$ benchstat old.txt new.txt
+```
 name            old time/op    new time/op    delta
-NewPrint          18.9µs ± 2%    19.5µs ± 3%   +2.91%  (p=0.002 n=10+10)
-NewPrint-4        6.26µs ± 2%    6.34µs ± 5%     ~     (p=0.321 n=8+9)
-NewPrint-12       4.09µs ± 3%    3.85µs ± 2%   -5.79%  (p=0.000 n=10+10)
-ColorPrint        2.66µs ± 5%    2.29µs ± 7%  -13.86%  (p=0.000 n=10+10)
-ColorPrint-4       871ns ± 8%     737ns ± 9%  -15.41%  (p=0.000 n=10+10)
-ColorPrint-12      639ns ± 2%     541ns ± 5%  -15.34%  (p=0.000 n=10+10)
-ColorString       3.60µs ± 4%    3.04µs ± 6%  -15.49%  (p=0.000 n=10+10)
-ColorString-4     1.37µs ±11%    1.19µs ± 5%  -13.41%  (p=0.000 n=10+9)
-ColorString-12    1.56µs ±19%    1.25µs ± 5%  -19.73%  (p=0.000 n=10+10)
+NewPrint          18.9µs ± 2%    18.9µs ± 4%     ~     (p=0.971 n=10+10)
+NewPrint-4        6.26µs ± 2%    5.94µs ±10%   -5.11%  (p=0.006 n=8+10)
+NewPrint-12       4.09µs ± 3%    3.90µs ± 3%   -4.61%  (p=0.001 n=10+10)
+ColorPrint        2.66µs ± 5%    2.26µs ± 4%  -15.16%  (p=0.000 n=10+9)
+ColorPrint-4       871ns ± 8%     728ns ±10%  -16.40%  (p=0.000 n=10+10)
+ColorPrint-12      639ns ± 2%     532ns ± 4%  -16.67%  (p=0.000 n=10+10)
+ColorString       3.60µs ± 4%    2.97µs ± 2%  -17.54%  (p=0.000 n=10+9)
+ColorString-4     1.37µs ±11%    1.15µs ± 4%  -16.04%  (p=0.000 n=10+9)
+ColorString-12    1.56µs ±19%    1.22µs ± 4%  -22.04%  (p=0.000 n=10+10)
 
 name            old alloc/op   new alloc/op   delta
 NewPrint           85.0B ± 0%     68.0B ± 0%  -20.00%  (p=0.000 n=10+10)
@@ -243,9 +242,9 @@ NewPrint-12        86.0B ± 0%     68.0B ± 0%  -20.93%  (p=0.000 n=10+10)
 ColorPrint         96.0B ± 0%     80.0B ± 0%  -16.67%  (p=0.000 n=10+10)
 ColorPrint-4       96.0B ± 0%     80.0B ± 0%  -16.67%  (p=0.000 n=10+10)
 ColorPrint-12      96.0B ± 0%     80.0B ± 0%  -16.67%  (p=0.000 n=10+10)
-ColorString       4.72kB ± 0%    4.69kB ± 0%   -0.69%  (p=0.000 n=8+10)
-ColorString-4     4.74kB ± 0%    4.71kB ± 0%   -0.59%  (p=0.000 n=9+9)
-ColorString-12    4.76kB ± 0%    4.74kB ± 0%   -0.55%  (p=0.000 n=10+10)
+ColorString       4.72kB ± 0%    4.69kB ± 0%   -0.63%  (p=0.000 n=8+9)
+ColorString-4     4.74kB ± 0%    4.71kB ± 0%   -0.68%  (p=0.000 n=9+10)
+ColorString-12    4.76kB ± 0%    4.73kB ± 0%   -0.76%  (p=0.000 n=10+10)
 
 name            old allocs/op  new allocs/op  delta
 NewPrint            5.00 ± 0%      4.00 ± 0%  -20.00%  (p=0.000 n=10+10)
