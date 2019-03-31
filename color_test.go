@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	colorable "github.com/mattn/go-colorable"
@@ -19,146 +20,275 @@ import (
 // escaped formatted results. Next we create some visual tests to be tested.
 // Each visual test includes the color name to be compared.
 func TestColor(t *testing.T) {
-	rb := new(bytes.Buffer)
-	color.Output = rb
+	t.Parallel()
 
+	b := new(bytes.Buffer)
+	color.Output = b
 	color.NoColor = false
 
-	testColors := []struct {
+	tests := []struct {
 		text string
-		code color.Attribute
+		attr color.Attribute
 	}{
-		{text: "black", code: color.FgBlack},
-		{text: "red", code: color.FgRed},
-		{text: "green", code: color.FgGreen},
-		{text: "yellow", code: color.FgYellow},
-		{text: "blue", code: color.FgBlue},
-		{text: "magent", code: color.FgMagenta},
-		{text: "cyan", code: color.FgCyan},
-		{text: "white", code: color.FgWhite},
-		{text: "hblack", code: color.FgHiBlack},
-		{text: "hred", code: color.FgHiRed},
-		{text: "hgreen", code: color.FgHiGreen},
-		{text: "hyellow", code: color.FgHiYellow},
-		{text: "hblue", code: color.FgHiBlue},
-		{text: "hmagent", code: color.FgHiMagenta},
-		{text: "hcyan", code: color.FgHiCyan},
-		{text: "hwhite", code: color.FgHiWhite},
+		{
+			text: "black",
+			attr: color.FgBlack,
+		},
+		{
+			text: "red",
+			attr: color.FgRed,
+		},
+		{
+			text: "green",
+			attr: color.FgGreen,
+		},
+		{
+			text: "yellow",
+			attr: color.FgYellow,
+		},
+		{
+			text: "blue",
+			attr: color.FgBlue,
+		},
+		{
+			text: "magent",
+			attr: color.FgMagenta,
+		},
+		{
+			text: "cyan",
+			attr: color.FgCyan,
+		},
+		{
+			text: "white",
+			attr: color.FgWhite,
+		},
+		{
+			text: "hiblack",
+			attr: color.FgHiBlack,
+		},
+		{
+			text: "hired",
+			attr: color.FgHiRed,
+		},
+		{
+			text: "higreen",
+			attr: color.FgHiGreen,
+		},
+		{
+			text: "hiyellow",
+			attr: color.FgHiYellow,
+		},
+		{
+			text: "hiblue",
+			attr: color.FgHiBlue,
+		},
+		{
+			text: "himagent",
+			attr: color.FgHiMagenta,
+		},
+		{
+			text: "hicyan",
+			attr: color.FgHiCyan,
+		},
+		{
+			text: "hiwhite",
+			attr: color.FgHiWhite,
+		},
 	}
 
-	for _, c := range testColors {
-		color.New(c.code).Print(c.text)
+	for _, tt := range tests {
+		t.Run("New.Print("+tt.text+")", func(t *testing.T) {
+			color.New(tt.attr).Print(tt.text)
 
-		line, _ := rb.ReadString('\n')
-		scannedLine := fmt.Sprintf("%q", line)
-		colored := fmt.Sprintf("\x1b[%dm%s\x1b[0m", c.code, c.text)
-		escapedForm := fmt.Sprintf("%q", colored)
+			line, _ := b.ReadString('\n')
+			scannedLine := fmt.Sprintf("%q", line)
+			colored := fmt.Sprintf("\x1b[%dm%s\x1b[0m", tt.attr, tt.text)
+			escapedForm := fmt.Sprintf("%q", colored)
 
-		fmt.Printf("%s\t: %s\n", c.text, line)
+			fmt.Printf("%s: %s\n", tt.text, line)
 
-		if scannedLine != escapedForm {
-			t.Errorf("Expecting %s, got '%s'\n", escapedForm, scannedLine)
-		}
+			if scannedLine != escapedForm {
+				t.Errorf("got %q, want %q", scannedLine, escapedForm)
+			}
+		})
 	}
 
-	for _, c := range testColors {
-		line := color.New(c.code).Sprintf("%s", c.text)
-		scannedLine := fmt.Sprintf("%q", line)
-		colored := fmt.Sprintf("\x1b[%dm%s\x1b[0m", c.code, c.text)
-		escapedForm := fmt.Sprintf("%q", colored)
+	for _, tt := range tests {
+		t.Run("New.Sprintf("+tt.text+")", func(t *testing.T) {
+			line := color.New(tt.attr).Sprintf("%s", tt.text)
+			scannedLine := fmt.Sprintf("%q", line)
+			colored := fmt.Sprintf("\x1b[%dm%s\x1b[0m", tt.attr, tt.text)
+			escapedForm := fmt.Sprintf("%q", colored)
 
-		fmt.Printf("%s\t: %s\n", c.text, line)
+			fmt.Printf("%s: %s\n", tt.text, line)
 
-		if scannedLine != escapedForm {
-			t.Errorf("Expecting %s, got '%s'\n", escapedForm, scannedLine)
-		}
+			if scannedLine != escapedForm {
+				t.Errorf("got %q, want %q", scannedLine, escapedForm)
+			}
+		})
 	}
 }
 
 func TestColorEquals(t *testing.T) {
-	fgblack1 := color.New(color.FgBlack)
-	fgblack2 := color.New(color.FgBlack)
-	bgblack := color.New(color.BgBlack)
-	fgbgblack := color.New(color.FgBlack, color.BgBlack)
-	fgblackbgred := color.New(color.FgBlack, color.BgRed)
-	fgred := color.New(color.FgRed)
-	bgred := color.New(color.BgRed)
-
-	if !fgblack1.Equals(fgblack2) {
-		t.Error("Two black colors are not equal")
+	tests := []struct {
+		name  string
+		c     *color.Color
+		wantC *color.Color
+		want  bool
+	}{
+		{
+			name:  "Two black colors are equal",
+			c:     color.New(color.FgBlack),
+			wantC: color.New(color.FgBlack),
+			want:  true,
+		},
+		{
+			name:  "Fg and bg black colors are not equal",
+			c:     color.New(color.FgBlack),
+			wantC: color.New(color.BgBlack),
+			want:  false,
+		},
+		{
+			name:  "Fg black not equals fg/bg black color",
+			c:     color.New(color.FgBlack),
+			wantC: color.New(color.FgBlack, color.BgBlack),
+			want:  false,
+		},
+		{
+			name:  "Fg black not equals Fg red",
+			c:     color.New(color.FgBlack),
+			wantC: color.New(color.FgRed),
+			want:  false,
+		},
+		{
+			name:  "Fg black not equals Bg red",
+			c:     color.New(color.FgBlack),
+			wantC: color.New(color.BgRed),
+			want:  false,
+		},
+		{
+			name:  "Fg black not equals fg black bg red",
+			c:     color.New(color.FgBlack),
+			wantC: color.New(color.FgBlack, color.BgRed),
+			want:  false,
+		},
 	}
 
-	if fgblack1.Equals(bgblack) {
-		t.Error("Fg and bg black colors are equal")
-	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	if fgblack1.Equals(fgbgblack) {
-		t.Error("Fg black equals fg/bg black color")
-	}
-
-	if fgblack1.Equals(fgred) {
-		t.Error("Fg black equals Fg red")
-	}
-
-	if fgblack1.Equals(bgred) {
-		t.Error("Fg black equals Bg red")
-	}
-
-	if fgblack1.Equals(fgblackbgred) {
-		t.Error("Fg black equals fg black bg red")
+			if got := tt.c.Equals(tt.wantC); got != tt.want {
+				t.Errorf(strings.Replace(tt.name, " not", "", 1))
+			}
+		})
 	}
 }
 
 func TestNoColor(t *testing.T) {
-	rb := new(bytes.Buffer)
-	color.Output = rb
+	b := new(bytes.Buffer)
+	color.Output = b
 
-	testColors := []struct {
+	tests := []struct {
 		text string
-		code color.Attribute
+		attr color.Attribute
 	}{
-		{text: "black", code: color.FgBlack},
-		{text: "red", code: color.FgRed},
-		{text: "green", code: color.FgGreen},
-		{text: "yellow", code: color.FgYellow},
-		{text: "blue", code: color.FgBlue},
-		{text: "magent", code: color.FgMagenta},
-		{text: "cyan", code: color.FgCyan},
-		{text: "white", code: color.FgWhite},
-		{text: "hblack", code: color.FgHiBlack},
-		{text: "hred", code: color.FgHiRed},
-		{text: "hgreen", code: color.FgHiGreen},
-		{text: "hyellow", code: color.FgHiYellow},
-		{text: "hblue", code: color.FgHiBlue},
-		{text: "hmagent", code: color.FgHiMagenta},
-		{text: "hcyan", code: color.FgHiCyan},
-		{text: "hwhite", code: color.FgHiWhite},
+		{
+			text: "black",
+			attr: color.FgBlack,
+		},
+		{
+			text: "red",
+			attr: color.FgRed,
+		},
+		{
+			text: "green",
+			attr: color.FgGreen,
+		},
+		{
+			text: "yellow",
+			attr: color.FgYellow,
+		},
+		{
+			text: "blue",
+			attr: color.FgBlue,
+		},
+		{
+			text: "magent",
+			attr: color.FgMagenta,
+		},
+		{
+			text: "cyan",
+			attr: color.FgCyan,
+		},
+		{
+			text: "white",
+			attr: color.FgWhite,
+		},
+		{
+			text: "hiblack",
+			attr: color.FgHiBlack,
+		},
+		{
+			text: "hired",
+			attr: color.FgHiRed,
+		},
+		{
+			text: "higreen",
+			attr: color.FgHiGreen,
+		},
+		{
+			text: "hiyellow",
+			attr: color.FgHiYellow,
+		},
+		{
+			text: "hiblue",
+			attr: color.FgHiBlue,
+		},
+		{
+			text: "himagent",
+			attr: color.FgHiMagenta,
+		},
+		{
+			text: "hicyan",
+			attr: color.FgHiCyan,
+		},
+		{
+			text: "hiwhite",
+			attr: color.FgHiWhite,
+		},
 	}
 
-	for _, c := range testColors {
-		p := color.New(c.code)
-		p.DisableColor()
-		p.Print(c.text)
+	for _, tt := range tests {
+		t.Run("DisableColor", func(t *testing.T) {
+			p := color.New(tt.attr)
+			p.DisableColor()
+			p.Print(tt.text)
 
-		line, _ := rb.ReadString('\n')
-		if line != c.text {
-			t.Errorf("Expecting %s, got '%s'\n", c.text, line)
-		}
+			line, _ := b.ReadString('\n')
+			if line != tt.text {
+				t.Errorf("got %q, want %q", line, tt.text)
+			}
+		})
 	}
 
-	// global check
-	color.NoColor = true
-	defer func() {
-		color.NoColor = false
-	}()
-	for _, c := range testColors {
-		p := color.New(c.code)
-		p.Print(c.text)
+	for _, tt := range tests {
+		t.Run("color.NoColor", func(t *testing.T) {
+			// global check
+			color.NoColor = true
+			defer func() {
+				color.NoColor = false
+			}()
 
-		line, _ := rb.ReadString('\n')
-		if line != c.text {
-			t.Errorf("Expecting %s, got '%s'\n", c.text, line)
-		}
+			p := color.New(tt.attr)
+			p.Print(tt.text)
+
+			line, _ := b.ReadString('\n')
+			if line != tt.text {
+				t.Errorf("got %q, want %q", line, tt.text)
+			}
+		})
 	}
 
 }
@@ -316,33 +446,118 @@ func TestNoFormat(t *testing.T) {
 
 func TestNoFormatString(t *testing.T) {
 	tests := []struct {
-		f      func(string, ...interface{}) string
+		fn     func(string, ...interface{}) string
 		format string
 		args   []interface{}
 		want   string
 	}{
-		{color.BlackString, "%s", nil, "\x1b[30m%s\x1b[0m"},
-		{color.RedString, "%s", nil, "\x1b[31m%s\x1b[0m"},
-		{color.GreenString, "%s", nil, "\x1b[32m%s\x1b[0m"},
-		{color.YellowString, "%s", nil, "\x1b[33m%s\x1b[0m"},
-		{color.BlueString, "%s", nil, "\x1b[34m%s\x1b[0m"},
-		{color.MagentaString, "%s", nil, "\x1b[35m%s\x1b[0m"},
-		{color.CyanString, "%s", nil, "\x1b[36m%s\x1b[0m"},
-		{color.WhiteString, "%s", nil, "\x1b[37m%s\x1b[0m"},
-		{color.HiBlackString, "%s", nil, "\x1b[90m%s\x1b[0m"},
-		{color.HiRedString, "%s", nil, "\x1b[91m%s\x1b[0m"},
-		{color.HiGreenString, "%s", nil, "\x1b[92m%s\x1b[0m"},
-		{color.HiYellowString, "%s", nil, "\x1b[93m%s\x1b[0m"},
-		{color.HiBlueString, "%s", nil, "\x1b[94m%s\x1b[0m"},
-		{color.HiMagentaString, "%s", nil, "\x1b[95m%s\x1b[0m"},
-		{color.HiCyanString, "%s", nil, "\x1b[96m%s\x1b[0m"},
-		{color.HiWhiteString, "%s", nil, "\x1b[97m%s\x1b[0m"},
+		{
+			fn:     color.BlackString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[30m%s\x1b[0m",
+		},
+		{
+			fn:     color.RedString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[31m%s\x1b[0m",
+		},
+		{
+			fn:     color.GreenString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[32m%s\x1b[0m",
+		},
+		{
+			fn:     color.YellowString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[33m%s\x1b[0m",
+		},
+		{
+			fn:     color.BlueString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[34m%s\x1b[0m",
+		},
+		{
+			fn:     color.MagentaString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[35m%s\x1b[0m",
+		},
+		{
+			fn:     color.CyanString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[36m%s\x1b[0m",
+		},
+		{
+			fn:     color.WhiteString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[37m%s\x1b[0m",
+		},
+		{
+			fn:     color.HiBlackString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[90m%s\x1b[0m",
+		},
+		{
+			fn:     color.HiRedString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[91m%s\x1b[0m",
+		},
+		{
+			fn:     color.HiGreenString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[92m%s\x1b[0m",
+		},
+		{
+			fn:     color.HiYellowString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[93m%s\x1b[0m",
+		},
+		{
+			fn:     color.HiBlueString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[94m%s\x1b[0m",
+		},
+		{
+			fn:     color.HiMagentaString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[95m%s\x1b[0m",
+		},
+		{
+			fn:     color.HiCyanString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[96m%s\x1b[0m",
+		},
+		{
+			fn:     color.HiWhiteString,
+			format: "%s",
+			args:   nil,
+			want:   "\x1b[97m%s\x1b[0m",
+		},
 	}
 
-	for i, test := range tests {
-		s := fmt.Sprintf("%s", test.f(test.format, test.args...))
-		if s != test.want {
-			t.Errorf("[%d] want: %q, got: %q", i, test.want, s)
-		}
+	for i, tt := range tests {
+		i, tt := i, tt
+		t.Run(tt.want, func(t *testing.T) {
+			t.Parallel()
+
+			s := fmt.Sprintf("%s", tt.fn(tt.format, tt.args...))
+			if s != tt.want {
+				t.Errorf("[%d] got: %q, want: %q", i, s, tt.want)
+			}
+		})
 	}
 }
