@@ -62,10 +62,10 @@ const (
 	escapeSuffix = "m"
 )
 
-// Attribute defines a single SGR Code
+// Attribute defines a single SGR Code.
 type Attribute int
 
-// Base attributes
+// Base attributes.
 const (
 	Reset Attribute = iota
 	Bold
@@ -79,7 +79,7 @@ const (
 	CrossedOut
 )
 
-// Foreground text colors
+// Foreground text colors.
 const (
 	FgBlack Attribute = iota + 30
 	FgRed
@@ -91,7 +91,7 @@ const (
 	FgWhite
 )
 
-// Foreground Hi-Intensity text colors
+// Foreground Hi-Intensity text colors.
 const (
 	FgHiBlack Attribute = iota + 90
 	FgHiRed
@@ -103,7 +103,7 @@ const (
 	FgHiWhite
 )
 
-// Background text colors
+// Background text colors.
 const (
 	BgBlack Attribute = iota + 40
 	BgRed
@@ -115,7 +115,7 @@ const (
 	BgWhite
 )
 
-// Background Hi-Intensity text colors
+// Background Hi-Intensity text colors.
 const (
 	BgHiBlack Attribute = iota + 100
 	BgHiRed
