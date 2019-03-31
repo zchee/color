@@ -39,7 +39,6 @@ type newPrintFunc interface {
 
 func benchmarkNewPrint(b *testing.B, fn newPrintFunc, length int64) {
 	buf := genRandomBytes(b, length)
-	b.SetBytes(length)
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -58,13 +57,12 @@ type printFuncs [numPrintFunc]func(format string, a ...interface{})
 
 func benchmarkColorPrint(b *testing.B, fn printFuncs, length int64) {
 	const format = "buf: %x"
+	buf := genRandomBytes(b, length)
 	r := rand.New(randSrc)
 
 	b.ReportAllocs()
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
-		buf := genRandomBytes(b, length)
-		b.SetBytes(length)
 		n := r.Intn(numPrintFunc)
 		for pb.Next() {
 			fn[n](format, buf)
@@ -78,13 +76,12 @@ type stringFuncs [numstringFunc]func(format string, a ...interface{}) string
 
 func benchmarkColorString(b *testing.B, fn stringFuncs, length int64) {
 	const format = "buf: %x"
+	buf := genRandomBytes(b, length)
 	r := rand.New(randSrc)
 
 	b.ReportAllocs()
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
-		buf := genRandomBytes(b, length)
-		b.SetBytes(length)
 		n := r.Intn(numPrintFunc)
 		for pb.Next() {
 			_ = fn[n](format, buf)
