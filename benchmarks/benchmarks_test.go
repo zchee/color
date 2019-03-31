@@ -9,10 +9,14 @@ package benchmarks_test
 import (
 	crand "crypto/rand"
 	"io"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/zchee/color"
+	"github.com/zchee/color/benchmarks"
 )
 
 func TestMain(m *testing.M) {
@@ -90,4 +94,31 @@ func benchmarkColorString(b *testing.B, fn stringFuncs, length int64) {
 			_ = fn[n](format, buf)
 		}
 	})
+}
+
+func benchmark_getCacheColor(b *testing.B, i int) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		p := color.Attribute(rand.Intn(7) + i)
+		for pb.Next() {
+			_ = benchmarks.GetCacheColor(p)
+		}
+	})
+}
+
+func BenchmarkGetCacheColorFg(b *testing.B) {
+	benchmark_getCacheColor(b, 30)
+}
+
+func BenchmarkGetCacheColorFgHi(b *testing.B) {
+	benchmark_getCacheColor(b, 90)
+}
+
+func BenchmarkGetCacheColorBg(b *testing.B) {
+	benchmark_getCacheColor(b, 40)
+}
+
+func BenchmarkGetCacheColorBgHi(b *testing.B) {
+	benchmark_getCacheColor(b, 100)
 }
