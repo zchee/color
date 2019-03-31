@@ -202,13 +202,17 @@ func (c *Color) unset() {
 
 // sequence returns a formatted SGR sequence to be plugged into a "\x1b[...m"
 // an example output might be: "1;36" -> bold cyan
-func (c *Color) sequence() string {
-	format := make([]string, len(c.params))
-	for i, attr := range c.params {
-		format[i] = attr.String()
+func (c *Color) sequence() (s string) {
+	var b strings.Builder
+
+	for _, attr := range c.params {
+		b.Write(unsafeToSlice(attr.String()))
+		b.WriteByte(':')
 	}
 
-	return strings.Join(format, ";")
+	s = b.String()[:b.Len()-1] // trim last ':'
+
+	return
 }
 
 func (c *Color) format() string {
