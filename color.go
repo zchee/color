@@ -229,17 +229,12 @@ func New(value ...Attribute) (c *Color) {
 	return c
 }
 
-// Put reset c.params and puts colorPool.
-func (c *Color) Put() {
-	c.Reset()
-	colorPool.Put(c)
-}
-
 // Set sets the given parameters immediately. It will change the color of
 // output with the given SGR parameters until color.Unset() is called.
 func Set(p ...Attribute) *Color {
 	c := New(p...)
 	c.Set()
+
 	return c
 }
 
@@ -253,13 +248,39 @@ func Unset() {
 	Output.Write(unsafeToSlice(escapePrefix + Reset.String() + escapeSuffix))
 }
 
+// Add is used to chain SGR parameters. Use as many as parameters to combine
+// and create custom color objects. Example: Add(color.FgRed, color.Underline).
+func (c *Color) Add(value ...Attribute) *Color {
+	c.params = append(c.params, value...)
+
+	return c
+}
+
+// Put reset c.params and puts colorPool.
+func (c *Color) Put() {
+	c.Reset()
+	colorPool.Put(c)
+}
+
+// Prepend prepends value Attribute to c.
+func (c *Color) Prepend(value Attribute) {
+	c.params = append(c.params, 0)
+	copy(c.params[1:], c.params[0:])
+	c.params[0] = value
+}
+
+// Reset resets the c.params slice.
+func (c *Color) Reset() {
+	c.params = c.params[:0]
+}
+
 // Set sets the SGR sequence.
 func (c *Color) Set() *Color {
 	if c.isNoColorSet() {
 		return c
 	}
-
 	fmt.Fprintf(Output, c.format())
+
 	return c
 }
 
@@ -271,12 +292,41 @@ func (c *Color) unset() {
 	Unset()
 }
 
+// sequence returns a formatted SGR sequence to be plugged into a "\x1b[...m"
+// an example output might be: "1;36" -> bold cyan
+func (c *Color) sequence() string {
+	format := make([]string, len(c.params))
+	for i, attr := range c.params {
+		format[i] = attr.String()
+	}
+
+	return strings.Join(format, ";")
+}
+
+func (c *Color) format() string {
+	return escapePrefix + c.sequence() + escapeSuffix
+}
+
+func (c *Color) unformat() string {
+	return escapePrefix + Reset.String() + escapeSuffix
+}
+
+// wrap wraps the s string with the colors attributes. The string is ready to
+// be printed.
+func (c *Color) wrap(s string) string {
+	if c.isNoColorSet() {
+		return s
+	}
+
+	return c.format() + s + c.unformat()
+}
+
 func (c *Color) setWriter(w io.Writer) *Color {
 	if c.isNoColorSet() {
 		return c
 	}
-
 	fmt.Fprintf(w, c.format())
+
 	return c
 }
 
@@ -290,25 +340,6 @@ func (c *Color) unsetWriter(w io.Writer) {
 	}
 
 	w.Write(unsafeToSlice(escapePrefix + Reset.String() + escapeSuffix))
-}
-
-// Add is used to chain SGR parameters. Use as many as parameters to combine
-// and create custom color objects. Example: Add(color.FgRed, color.Underline).
-func (c *Color) Add(value ...Attribute) *Color {
-	c.params = append(c.params, value...)
-	return c
-}
-
-// Prepend prepends value Attribute to c.
-func (c *Color) Prepend(value Attribute) {
-	c.params = append(c.params, 0)
-	copy(c.params[1:], c.params[0:])
-	c.params[0] = value
-}
-
-// Reset resets the c.params slice.
-func (c *Color) Reset() {
-	c.params = c.params[:0]
 }
 
 // Fprint formats using the default formats for its operands and writes to w.
@@ -478,33 +509,8 @@ func (c *Color) SprintlnFunc() func(a ...interface{}) string {
 	}
 }
 
-// sequence returns a formatted SGR sequence to be plugged into a "\x1b[...m"
-// an example output might be: "1;36" -> bold cyan
-func (c *Color) sequence() string {
-	format := make([]string, len(c.params))
-	for i, attr := range c.params {
-		format[i] = attr.String()
-	}
-
-	return strings.Join(format, ";")
-}
-
-// wrap wraps the s string with the colors attributes. The string is ready to
-// be printed.
-func (c *Color) wrap(s string) string {
-	if c.isNoColorSet() {
-		return s
-	}
-
-	return c.format() + s + c.unformat()
-}
-
-func (c *Color) format() string {
-	return escapePrefix + c.sequence() + escapeSuffix
-}
-
-func (c *Color) unformat() string {
-	return escapePrefix + Reset.String() + escapeSuffix
+func boolPtr(v bool) *bool {
+	return &v
 }
 
 // DisableColor disables the color output. Useful to not change any existing
@@ -530,6 +536,16 @@ func (c *Color) isNoColorSet() bool {
 	return NoColor
 }
 
+func (c *Color) attrExists(a Attribute) bool {
+	for _, attr := range c.params {
+		if attr == a {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Equals returns a boolean value indicating whether two colors are equal.
 func (c *Color) Equals(c2 *Color) bool {
 	if len(c.params) != len(c2.params) {
@@ -543,20 +559,6 @@ func (c *Color) Equals(c2 *Color) bool {
 	}
 
 	return true
-}
-
-func (c *Color) attrExists(a Attribute) bool {
-	for _, attr := range c.params {
-		if attr == a {
-			return true
-		}
-	}
-
-	return false
-}
-
-func boolPtr(v bool) *bool {
-	return &v
 }
 
 func getCachedColor(p Attribute) (c *Color) {
