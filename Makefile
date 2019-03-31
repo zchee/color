@@ -20,7 +20,8 @@ test:
 .PHONY: bench/base
 bench/base:
 	$(call target,${TARGET})
-	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go test -v -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ${GO_BENCH_OUTPUT}
+	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go mod vendor -v
+	@pushd ${GO_BENCH_WORKING_DIRECTORY} > /dev/null 2>&1; go test -v -mod=vendor -tags=${GO_TAGS} -cpu ${GO_BENCH_CPUS} -count ${GO_BENCH_COUNT} -run='^$$' -bench=${GO_BENCH_FUNCS} ${GO_BENCH_FLAGS} . | tee ${GO_BENCH_OUTPUT}
 
 .PHONY: bench
 bench: TARGET=bench
