@@ -164,7 +164,7 @@ func (c *Color) Add(value ...Attribute) *Color {
 	return c
 }
 
-// Put reset c.params and puts colorPool.
+// Put resets c.params and puts colorPool.
 func (c *Color) Put() {
 	c.Reset()
 	colorPool.Put(c)
