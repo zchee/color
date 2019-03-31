@@ -5,7 +5,7 @@
 package color
 
 func init() {
-	for i := 0; i < 96; i++ { // init pooled 64(default)+32(num of *Color cache)
+	for i := 0; i < 96; i++ { // init pooled 64(default) + 32(num of *Color cache)
 		colorPool.Put(&Color{params: make([]Attribute, allocMinSize, allocMaxSize)})
 	}
 
