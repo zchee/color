@@ -122,3 +122,35 @@ func BenchmarkGetCacheColorBg(b *testing.B) {
 func BenchmarkGetCacheColorBgHi(b *testing.B) {
 	benchmark_getCacheColor(b, 100)
 }
+
+func benchmark_colorPrint(b *testing.B, i int) {
+	color.Output = ioutil.Discard
+	color.NoColor = false
+	const format = "buf: %x\n"
+	buf := genRandomBytes(b, length)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		p := color.Attribute(rand.Intn(7) + i)
+		for pb.Next() {
+			benchmarks.ColorPrint(p, format, buf)
+		}
+	})
+}
+
+func BenchmarkColorPrintFg(b *testing.B) {
+	benchmark_colorPrint(b, 30)
+}
+
+func BenchmarkColorPrintFgHi(b *testing.B) {
+	benchmark_colorPrint(b, 90)
+}
+
+func BenchmarColorPrintBg(b *testing.B) {
+	benchmark_colorPrint(b, 40)
+}
+
+func BenchmarkColorPrintBgHi(b *testing.B) {
+	benchmark_colorPrint(b, 100)
+}
