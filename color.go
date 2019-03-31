@@ -485,9 +485,10 @@ func colorPrint(p Attribute, format string, a ...interface{}) {
 
 	if len(a) == 0 {
 		c.Print(format)
-	} else {
-		c.Printf(format, a...)
+		return
 	}
+
+	c.Printf(format, a...)
 }
 
 func colorString(p Attribute, format string, a ...interface{}) string {
