@@ -32,9 +32,9 @@ var (
 	Error = colorable.NewColorableStderr()
 )
 
-// colorsCache is used to reduce the count of created Color objects and
+// colorCache is used to reduce the count of created Color objects and
 // allows to reuse already created objects with required Attribute using intern sync.Pool pattern.
-var colorsCache = sync.Pool{
+var colorCache = sync.Pool{
 	New: func() interface{} {
 		return make(map[Attribute]*Color)
 	},
@@ -466,16 +466,16 @@ func (c *Color) Equals(c2 *Color) bool {
 }
 
 func getCacheColor(p Attribute) (c *Color) {
-	m := colorsCache.Get().(map[Attribute]*Color)
+	m := colorCache.Get().(map[Attribute]*Color)
 	c, ok := m[p]
 	if ok {
-		colorsCache.Put(m)
+		colorCache.Put(m)
 		return c
 	}
 
 	c = New(p)
 	m[p] = c
-	colorsCache.Put(m)
+	colorCache.Put(m)
 
 	return c
 }
