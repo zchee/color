@@ -34,7 +34,7 @@ var (
 
 // colorsCache is used to reduce the count of created Color objects and
 // allows to reuse already created objects with required Attribute using intern sync.Pool pattern.
-var colorsCache sync.Pool = sync.Pool{
+var colorsCache = sync.Pool{
 	New: func() interface{} {
 		return make(map[Attribute]*Color)
 	},
@@ -51,7 +51,7 @@ const (
 	allocMaxSize = 2
 )
 
-var colorPool sync.Pool = sync.Pool{
+var colorPool = sync.Pool{
 	New: func() interface{} {
 		return &Color{params: make([]Attribute, allocMinSize, allocMaxSize)}
 	},
