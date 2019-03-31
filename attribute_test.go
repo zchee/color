@@ -201,7 +201,6 @@ func TestAttributeString(t *testing.T) {
 	}
 }
 
-
 func TestAttributeName(t *testing.T) {
 	tests := []struct {
 		attr color.Attribute
