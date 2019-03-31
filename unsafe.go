@@ -11,15 +11,18 @@ import (
 
 // unsafeToSlice returns a byte array that points to the given string without a heap allocation.
 // The string must be preserved until the byte array is disposed.
-func unsafeToSlice(s string) (p []byte) {
+func unsafeToSlice(s string) (b []byte) {
 	if s == "" {
 		return
 	}
 
-	sh := (*reflect.SliceHeader)(unsafe.Pointer(&p))
-	sh.Data = (*reflect.StringHeader)(unsafe.Pointer(&s)).Data
-	sh.Len = len(s)
-	sh.Cap = len(s)
+	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	bh := &reflect.SliceHeader{
+		Data: sh.Data,
+		Len:  sh.Len,
+		Cap:  sh.Len,
+	}
+	b = *(*[]byte)(unsafe.Pointer(bh))
 
 	return
 }
