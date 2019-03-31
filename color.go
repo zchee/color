@@ -234,10 +234,10 @@ func (c *Color) sequence() (s string) {
 
 	for _, attr := range c.params {
 		b.Write(unsafeToSlice(attr.String()))
-		b.WriteByte(':')
+		b.WriteByte(';')
 	}
 
-	s = b.String()[:b.Len()-1] // trim last ':'
+	s = b.String()[:b.Len()-1] // trim last ';'
 
 	return
 }
