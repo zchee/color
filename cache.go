@@ -5,9 +5,7 @@
 package color
 
 func init() {
-	for i := 0; i < 96; i++ { // init pooled 64(default) + 32(num of *Color cache)
-		colorPool.Put(&Color{params: make([]Attribute, allocMinSize, allocMaxSize)})
-	}
+	colorPool = newColorPool(96)
 
 	m := make(map[Attribute]*Color, 32) // Total for loop is 8(Black~White) * 4({F,B}g{,Hi}) = 32
 

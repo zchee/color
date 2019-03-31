@@ -51,11 +51,38 @@ const (
 	allocMaxSize = 2
 )
 
-var colorPool = sync.Pool{
-	New: func() interface{} {
-		return &Color{params: make([]Attribute, allocMinSize, allocMaxSize)}
-	},
+type pool struct {
+	c chan *Color
 }
+
+func newColorPool(size int) (p *pool) {
+	return &pool{
+		c: make(chan *Color, size),
+	}
+}
+
+func (p *pool) Get() (c *Color) {
+	select {
+	case c = <-p.c:
+		// reuse existing *Color
+	default:
+		c = &Color{params: make([]Attribute, allocMinSize, allocMaxSize)}
+	}
+
+	return
+}
+
+func (p *pool) Put(c *Color) {
+	c.Reset()
+
+	select {
+	case p.c <- c:
+	default:
+		// Discard the buffer if the pool is full.
+	}
+}
+
+var colorPool *pool
 
 const (
 	escapePrefix = "\x1b["
@@ -129,7 +156,7 @@ const (
 
 // New returns a newly created color object.
 func New(value ...Attribute) (c *Color) {
-	c = colorPool.Get().(*Color)
+	c = colorPool.Get()
 	c.Add(value...)
 
 	runtime.SetFinalizer(c, (*Color).Put)
