@@ -9,13 +9,22 @@ package benchmarks_test
 import (
 	crand "crypto/rand"
 	"io"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"testing"
 	"time"
+
+	fatihcolor "github.com/fatih/color"
+	"github.com/zchee/color"
 )
 
 func TestMain(m *testing.M) {
+	color.Output = ioutil.Discard
+	color.NoColor = false
+	fatihcolor.Output = ioutil.Discard
+	fatihcolor.NoColor = false
+
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	os.Exit(m.Run())

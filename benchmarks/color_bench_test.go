@@ -7,7 +7,6 @@
 package benchmarks_test
 
 import (
-	"io/ioutil"
 	"math/rand"
 	"testing"
 
@@ -18,16 +17,10 @@ import (
 const length = int64(1024)
 
 func BenchmarkNewPrint(b *testing.B) {
-	color.Output = ioutil.Discard
-	color.NoColor = false
-
 	benchmarkNewPrint(b, color.New(color.FgGreen), length)
 }
 
 func BenchmarkColorPrint(b *testing.B) {
-	color.Output = ioutil.Discard
-	color.NoColor = false
-
 	var fns = printFuncs{
 		color.Black,
 		color.Red,
@@ -43,9 +36,6 @@ func BenchmarkColorPrint(b *testing.B) {
 }
 
 func BenchmarkColorString(b *testing.B) {
-	color.Output = ioutil.Discard
-	color.NoColor = false
-
 	var fns = stringFuncs{
 		color.BlackString,
 		color.RedString,
@@ -88,8 +78,6 @@ func BenchmarkGetCacheColorBgHi(b *testing.B) {
 }
 
 func benchmark_colorPrint(b *testing.B, i int) {
-	color.Output = ioutil.Discard
-	color.NoColor = false
 	const format = "buf: %x\n"
 	buf := genRandomBytes(b, length)
 
@@ -120,8 +108,6 @@ func BenchmarkColorPrintBgHi(b *testing.B) {
 }
 
 func benchmark_colorString(b *testing.B, i int) {
-	color.Output = ioutil.Discard
-	color.NoColor = false
 	const format = "buf: %x\n"
 	buf := genRandomBytes(b, length)
 
