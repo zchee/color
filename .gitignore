@@ -48,3 +48,4 @@ coverage.*
 # benchmark
 *.txt
 !benchmarks/old.golden.txt
+!benchmarks/old.gce.golden.txt
