@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"runtime"
 	"strings"
 	"sync"
 
@@ -123,8 +122,6 @@ const (
 func New(value ...Attribute) (c *Color) {
 	c = colorPool.Get()
 	c.Add(value...)
-
-	runtime.SetFinalizer(c, (*Color).Put)
 
 	return c
 }
