@@ -32,6 +32,15 @@ var (
 	Error = colorable.NewColorableStderr()
 )
 
+// Color defines a custom color object which is defined by SGR parameters.
+type Color struct {
+	params  []Attribute
+	noColor *bool
+}
+
+// colorPool pools Color struct with leaky pools bounded channels pattern.
+var colorPool *pool
+
 // colorCache is used to reduce the count of created Color objects and
 // allows to reuse already created objects with required Attribute using intern sync.Pool pattern.
 var colorCache = sync.Pool{
@@ -39,50 +48,6 @@ var colorCache = sync.Pool{
 		return make(map[Attribute]*Color)
 	},
 }
-
-// Color defines a custom color object which is defined by SGR parameters.
-type Color struct {
-	params  []Attribute
-	noColor *bool
-}
-
-const (
-	allocMinSize = 0
-	allocMaxSize = 2
-)
-
-type pool struct {
-	c chan *Color
-}
-
-func newColorPool(size int) (p *pool) {
-	return &pool{
-		c: make(chan *Color, size),
-	}
-}
-
-func (p *pool) Get() (c *Color) {
-	select {
-	case c = <-p.c:
-		// reuse existing *Color
-	default:
-		c = &Color{params: make([]Attribute, allocMinSize, allocMaxSize)}
-	}
-
-	return
-}
-
-func (p *pool) Put(c *Color) {
-	c.Reset()
-
-	select {
-	case p.c <- c:
-	default:
-		// Discard the buffer if the pool is full.
-	}
-}
-
-var colorPool *pool
 
 const (
 	escapePrefix = "\x1b["
