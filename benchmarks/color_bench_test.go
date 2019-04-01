@@ -16,6 +16,36 @@ import (
 
 const length = int64(1024)
 
+var testAttributes = []color.Attribute{
+	color.Bold,
+	color.Italic,
+	color.Underline,
+	color.BlinkRapid,
+	color.FgRed,
+	color.FgCyan,
+	color.FgHiGreen,
+	color.FgHiBlue,
+	color.BgRed,
+	color.BgCyan,
+	color.BgHiGreen,
+	color.BgHiBlue,
+}
+
+func BenchmarkNew(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		n := rand.Intn(11) + 1
+		attrs := make([]color.Attribute, n)
+		for i := 1; i < n; i++ {
+			attrs[i] = testAttributes[rand.Intn(n)]
+		}
+		for pb.Next() {
+			_ = color.New(attrs...)
+		}
+	})
+}
+
 func BenchmarkNewPrint(b *testing.B) {
 	benchmarkNewPrint(b, color.New(color.FgGreen), length)
 }

@@ -16,6 +16,36 @@ import (
 
 const length = int64(1024)
 
+var testAttributes = []fatihcolor.Attribute{
+	fatihcolor.Bold,
+	fatihcolor.Italic,
+	fatihcolor.Underline,
+	fatihcolor.BlinkRapid,
+	fatihcolor.FgRed,
+	fatihcolor.FgCyan,
+	fatihcolor.FgHiGreen,
+	fatihcolor.FgHiBlue,
+	fatihcolor.BgRed,
+	fatihcolor.BgCyan,
+	fatihcolor.BgHiGreen,
+	fatihcolor.BgHiBlue,
+}
+
+func BenchmarkNew(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		n := rand.Intn(12)
+		attrs := make([]fatihcolor.Attribute, n)
+		for i := 1; i < n; i++ {
+			attrs[i] = testAttributes[rand.Intn(n)]
+		}
+		for pb.Next() {
+			_ = fatihcolor.New(attrs...)
+		}
+	})
+}
+
 func BenchmarkNewPrint(b *testing.B) {
 	benchmarkNewPrint(b, fatihcolor.New(fatihcolor.FgGreen), length)
 }
