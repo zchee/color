@@ -57,7 +57,7 @@ go mod vendor -v
 
 REVISION="$(git rev-parse --short -q HEAD)"
 go test -v -mod=vendor -tags=benchmark -count 10 -run='^$' -bench=. | tee "new.$REVISION.txt" || true
-benchstat "old.$REVISION.txt" "new.$REVISION.txt" | tee "benchstat.$REVISION.txt" || true
+benchstat old.gce.golden.txt "new.$REVISION.txt" | tee "benchstat.$REVISION.txt" || true
 
 gsutil cp "old.$REVISION.txt" "new.$REVISION.txt" "benchstat.$REVISION.txt" "$(curl -s -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/attributes/gsutil_benchstat_bucket_name)" || true
 
