@@ -7,14 +7,59 @@
 package benchmarks_test
 
 import (
+	crand "crypto/rand"
+	"flag"
+	"io"
+	"io/ioutil"
 	"math/rand"
+	"os"
 	"testing"
+	"time"
+	_ "unsafe" // required for go:linkname
 
+	fatihcolor "github.com/fatih/color"
 	"github.com/zchee/color"
-	"github.com/zchee/color/benchmarks"
 )
 
+var benchFatih = flag.Bool("fatih", false, "benchmark the fatih/color package")
+
 const length = int64(1024)
+
+type Color interface {
+	Fprint(w io.Writer, a ...interface{}) (n int, err error)
+	Print(a ...interface{}) (n int, err error)
+	Fprintf(w io.Writer, format string, a ...interface{}) (n int, err error)
+	Printf(format string, a ...interface{}) (n int, err error)
+	Fprintln(w io.Writer, a ...interface{}) (n int, err error)
+	Println(a ...interface{}) (n int, err error)
+	Sprint(a ...interface{}) string
+	Sprintln(a ...interface{}) string
+	Sprintf(format string, a ...interface{}) string
+}
+
+type attribute int
+
+func TestMain(m *testing.M) {
+	color.Output = ioutil.Discard
+	color.NoColor = false
+	fatihcolor.Output = ioutil.Discard
+	fatihcolor.NoColor = false
+
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	os.Exit(m.Run())
+}
+
+func genRandomBytes(tb testing.TB, length int64) (b []byte) {
+	tb.Helper()
+
+	b = make([]byte, length)
+	if _, err := crand.Read(b); err != nil {
+		tb.Fatal(err)
+	}
+
+	return b
+}
 
 var testAttributes = []color.Attribute{
 	color.Bold,
@@ -31,62 +76,194 @@ var testAttributes = []color.Attribute{
 	color.BgHiBlue,
 }
 
+var testFatihcAttributes = []fatihcolor.Attribute{
+	fatihcolor.Bold,
+	fatihcolor.Italic,
+	fatihcolor.Underline,
+	fatihcolor.BlinkRapid,
+	fatihcolor.FgRed,
+	fatihcolor.FgCyan,
+	fatihcolor.FgHiGreen,
+	fatihcolor.FgHiBlue,
+	fatihcolor.BgRed,
+	fatihcolor.BgCyan,
+	fatihcolor.BgHiGreen,
+	fatihcolor.BgHiBlue,
+}
+
 func BenchmarkNew(b *testing.B) {
+	b.ReportAllocs()
+
+	n := rand.Intn(11) + 1
+
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		if !*benchFatih {
+			attrs := make([]color.Attribute, n)
+			for i := 1; i < n; i++ {
+				attrs[i] = testAttributes[rand.Intn(n)]
+			}
+			for pb.Next() {
+				_ = color.New(attrs...)
+			}
+		} else {
+			attrs := make([]fatihcolor.Attribute, n)
+			for i := 1; i < n; i++ {
+				attrs[i] = testFatihcAttributes[rand.Intn(n)]
+			}
+			for pb.Next() {
+				_ = fatihcolor.New(attrs...)
+			}
+		}
+	})
+}
+
+func benchmarkNewPrint(b *testing.B, fn Color, length int64) {
+	buf := genRandomBytes(b, length)
+
 	b.ReportAllocs()
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
-		n := rand.Intn(11) + 1
-		attrs := make([]color.Attribute, n)
-		for i := 1; i < n; i++ {
-			attrs[i] = testAttributes[rand.Intn(n)]
-		}
 		for pb.Next() {
-			_ = color.New(attrs...)
+			fn.Print(buf)
 		}
 	})
 }
 
 func BenchmarkNewPrint(b *testing.B) {
-	benchmarkNewPrint(b, color.New(color.FgGreen), length)
+	var fn Color
+	if !*benchFatih {
+		fn = color.New(color.FgGreen)
+	} else {
+		fn = fatihcolor.New(fatihcolor.FgGreen)
+	}
+
+	benchmarkNewPrint(b, fn, length)
+}
+
+const numPrintFunc = 8
+
+type printFuncs [numPrintFunc]func(format string, a ...interface{})
+
+func benchmarkColorPrint(b *testing.B, fn printFuncs, length int64) {
+	const format = "buf: %x\n"
+	buf := genRandomBytes(b, length)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		n := rand.Intn(numPrintFunc)
+		for pb.Next() {
+			fn[n](format, buf)
+		}
+	})
 }
 
 func BenchmarkColorPrint(b *testing.B) {
-	var fns = printFuncs{
-		color.Black,
-		color.Red,
-		color.Green,
-		color.Yellow,
-		color.Blue,
-		color.Magenta,
-		color.Cyan,
-		color.White,
+	var fns printFuncs
+	if !*benchFatih {
+		fns = printFuncs{
+			color.Black,
+			color.Red,
+			color.Green,
+			color.Yellow,
+			color.Blue,
+			color.Magenta,
+			color.Cyan,
+			color.White,
+		}
+	} else {
+		fns = printFuncs{
+			fatihcolor.Black,
+			fatihcolor.Red,
+			fatihcolor.Green,
+			fatihcolor.Yellow,
+			fatihcolor.Blue,
+			fatihcolor.Magenta,
+			fatihcolor.Cyan,
+			fatihcolor.White,
+		}
 	}
 
 	benchmarkColorPrint(b, fns, length)
 }
 
+const numstringFunc = 8
+
+type stringFuncs [numstringFunc]func(format string, a ...interface{}) string
+
+func benchmarkColorString(b *testing.B, fn stringFuncs, length int64) {
+	const format = "buf: %x\n"
+	buf := genRandomBytes(b, length)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		n := rand.Intn(numstringFunc)
+		for pb.Next() {
+			_ = fn[n](format, buf)
+		}
+	})
+}
+
 func BenchmarkColorString(b *testing.B) {
-	var fns = stringFuncs{
-		color.BlackString,
-		color.RedString,
-		color.GreenString,
-		color.YellowString,
-		color.BlueString,
-		color.MagentaString,
-		color.CyanString,
-		color.WhiteString,
+	var fns stringFuncs
+	if !*benchFatih {
+		fns = stringFuncs{
+			color.BlackString,
+			color.RedString,
+			color.GreenString,
+			color.YellowString,
+			color.BlueString,
+			color.MagentaString,
+			color.CyanString,
+			color.WhiteString,
+		}
+	} else {
+		fns = stringFuncs{
+			fatihcolor.BlackString,
+			fatihcolor.RedString,
+			fatihcolor.GreenString,
+			fatihcolor.YellowString,
+			fatihcolor.BlueString,
+			fatihcolor.MagentaString,
+			fatihcolor.CyanString,
+			fatihcolor.WhiteString,
+		}
 	}
 
 	benchmarkColorString(b, fns, length)
+}
+
+//go:linkname getCacheColor github.com/zchee/color.getCacheColor
+func getCacheColor(p color.Attribute) (c *color.Color)
+
+//go:linkname getCachedColorFatih github.com/fatih/color.getCachedColor
+func getCachedColorFatih(p fatihcolor.Attribute) (c *fatihcolor.Color)
+
+func GetCacheColor(p attribute) Color {
+	if !*benchFatih {
+		return getCacheColor(color.Attribute(p))
+	}
+
+	return getCachedColorFatih(fatihcolor.Attribute(p))
+}
+
+func genAttribute(i int) attribute {
+	if !*benchFatih {
+		return attribute(color.Attribute(rand.Intn(7) + i))
+	}
+
+	return attribute(fatihcolor.Attribute(rand.Intn(7) + i))
 }
 
 func benchmark_getCacheColor(b *testing.B, i int) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
-		p := color.Attribute(rand.Intn(7) + i)
+		p := genAttribute(i)
 		for pb.Next() {
-			_ = benchmarks.GetCacheColor(p)
+			_ = GetCacheColor(p)
 		}
 	})
 }
@@ -107,6 +284,20 @@ func BenchmarkGetCacheColorBgHi(b *testing.B) {
 	benchmark_getCacheColor(b, 100)
 }
 
+//go:linkname colorPrint github.com/zchee/color.colorPrint
+func colorPrint(p color.Attribute, format string, a ...interface{})
+
+//go:linkname colorPrintFatih github.com/fatih/color.colorPrint
+func colorPrintFatih(format string, p fatihcolor.Attribute, a ...interface{})
+
+func ColorPrint(p attribute, format string, a ...interface{}) {
+	if !*benchFatih {
+		colorPrint(color.Attribute(p), format, a...)
+	} else {
+		colorPrintFatih(format, fatihcolor.Attribute(p), a...)
+	}
+}
+
 func benchmark_colorPrint(b *testing.B, i int) {
 	const format = "buf: %x\n"
 	buf := genRandomBytes(b, length)
@@ -114,9 +305,9 @@ func benchmark_colorPrint(b *testing.B, i int) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
-		p := color.Attribute(rand.Intn(7) + i)
+		p := genAttribute(i)
 		for pb.Next() {
-			benchmarks.ColorPrint(p, format, buf)
+			ColorPrint(p, format, buf)
 		}
 	})
 }
@@ -137,6 +328,20 @@ func BenchmarkColorPrintBgHi(b *testing.B) {
 	benchmark_colorPrint(b, 100)
 }
 
+//go:linkname colorString github.com/zchee/color.colorString
+func colorString(p color.Attribute, format string, a ...interface{}) string
+
+//go:linkname colorStringFatih github.com/fatih/color.colorString
+func colorStringFatih(format string, p fatihcolor.Attribute, a ...interface{}) string
+
+func ColorString(format string, p attribute, a ...interface{}) string {
+	if !*benchFatih {
+		return colorString(color.Attribute(p), format, a...)
+	}
+
+	return colorStringFatih(format, fatihcolor.Attribute(p), a...)
+}
+
 func benchmark_colorString(b *testing.B, i int) {
 	const format = "buf: %x\n"
 	buf := genRandomBytes(b, length)
@@ -144,9 +349,9 @@ func benchmark_colorString(b *testing.B, i int) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
-		p := color.Attribute(rand.Intn(7) + i)
+		p := genAttribute(i)
 		for pb.Next() {
-			_ = benchmarks.ColorString(p, format, buf)
+			_ = ColorString(format, p, buf)
 		}
 	})
 }
