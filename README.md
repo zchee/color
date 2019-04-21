@@ -167,11 +167,11 @@ c.Println("This prints again cyan...")
 ### Run benchmark
 
 ```sh
-$ cd ./benchmarks
-$ go mod vendor -v
-$ go test -v -mod=vendor -tags=benchmark_fatih -cpu 1,4,12 -count 10 -run='^$' -bench=. -benchtime=.1s . | tee old.txt
-$ go test -v -mod=vendor -tags=benchmark -cpu 1,4,12 -count 10 -run='^$' -bench=. -benchtime=.1s . | tee new.txt
-$ benchstat old.txt new.txt
+cd ./benchmarks
+go mod vendor -v
+go test -v -mod=vendor -tags=benchmark -cpu 1,4,12 -count 10 -run='^$' -bench=. -benchtime=.1s . -fatih | tee old.txt
+go test -v -mod=vendor -tags=benchmark -cpu 1,4,12 -count 10 -run='^$' -bench=. -benchtime=.1s . | tee new.txt
+benchstat old.txt new.txt
 ```
 
 ### Benchmark result
