@@ -29,7 +29,7 @@ bench: TARGET=bench
 bench: bench/base
 
 .PHONY: benchstat
-benchstat: bench
+benchstat:
 	@benchstat benchmarks/old.golden.txt $(shell echo ${GO_BENCH_OUTPUT} | cut -d/ -f2)
 
 .PHONY: benchstat/new
