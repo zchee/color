@@ -7,14 +7,24 @@ package color_test
 import (
 	"bytes"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	colorable "github.com/mattn/go-colorable"
 
 	"github.com/zchee/color"
 )
+
+func TestMain(m *testing.M) {
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	var code int
+	defer os.Exit(code)
+	code = m.Run()
+}
 
 // Testing colors is kinda different. First we test for given colors and their
 // escaped formatted results. Next we create some visual tests to be tested.
