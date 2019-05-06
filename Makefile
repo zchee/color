@@ -10,6 +10,9 @@ GO_BENCH_FLAGS ?= -benchtime=${GO_BENCH_TIME}
 GO_BENCH_OUTPUT ?= ../new.txt
 GO_BENCH_WORKING_DIRECTORY ?= ./benchmarks
 
+GOLANG_VERSION = 1.12.4
+MACHINE_TYPE = n1-standard-16
+
 define target
 @printf "\\x1b[1;32m$(patsubst ,$@,$(1))\\x1b[0m\\n"
 endef
@@ -27,6 +30,15 @@ bench/base:
 .PHONY: bench
 bench: TARGET=bench
 bench: bench/base
+
+.PHONY: bench/gce
+bench/gce: GSUTIL_BENCHSTAT_BUCKET_NAME=gs://${GOOGLE_CLOUD_PROJECT}/benchstat/
+bench/gce:
+	gcloud --project="${GOOGLE_CLOUD_PROJECT}" alpha compute instances create --zone 'asia-northeast1-a' --machine-type "${MACHINE_TYPE}" --image-project='debian-cloud' --image-family='debian-9' --boot-disk-type='pd-ssd' --preemptible --scopes 'https://www.googleapis.com/auth/cloud-platform' --metadata="golang_version=${GOLANG_VERSION},gsutil_benchstat_bucket_name=${GSUTIL_BENCHSTAT_BUCKET_NAME}" --metadata-from-file='startup-script=hack/gce-benchmark.bash' --async --verbosity='debug' 'benchstat'
+
+.PHONY: bench/gce/log
+bench/gce/log:
+	@watch -c -n5 -t -x gcloud --project="${GOOGLE_CLOUD_PROJECT}" logging read --order='desc' --limit=10 'resource.type="gce_instance" labels."compute.googleapis.com/resource_name"="benchstat"'
 
 .PHONY: benchstat
 benchstat:
