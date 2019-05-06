@@ -35,9 +35,9 @@ func TestMain(m *testing.M) {
 
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	exit := m.Run()
-
-	defer os.Exit(exit)
+	var status int
+	status = m.Run()
+	defer func() { os.Exit(status) }()
 }
 
 // Color provides the both of this and fatih package's Color method.
@@ -97,30 +97,25 @@ var testFatihcAttributes = []fatihcolor.Attribute{
 }
 
 func BenchmarkNew(b *testing.B) {
-	b.ReportAllocs()
-
 	n := rand.Intn(11) + 1
 
+	b.ReportAllocs()
 	b.ResetTimer()
-	b.RunParallel(func(pb *testing.PB) {
+	for i := 0; i < b.N; i++ {
 		if !*benchFatih {
 			attrs := make([]color.Attribute, n)
 			for i := 1; i < n; i++ {
 				attrs[i] = testAttributes[rand.Intn(n)]
 			}
-			for pb.Next() {
-				_ = color.New(attrs...)
-			}
+			_ = color.New(attrs...)
 		} else {
 			attrs := make([]fatihcolor.Attribute, n)
 			for i := 1; i < n; i++ {
 				attrs[i] = testFatihcAttributes[rand.Intn(n)]
 			}
-			for pb.Next() {
-				_ = fatihcolor.New(attrs...)
-			}
+			_ = fatihcolor.New(attrs...)
 		}
-	})
+	}
 }
 
 func getNewFnuc() Color {
@@ -136,11 +131,9 @@ func benchmarkNewPrint(b *testing.B, fn Color, length int) {
 
 	b.ReportAllocs()
 	b.ResetTimer()
-	b.RunParallel(func(pb *testing.PB) {
-		for pb.Next() {
-			fn.Print(buf)
-		}
-	})
+	for i := 0; i < b.N; i++ {
+		fn.Print(buf)
+	}
 }
 
 func BenchmarkNewPrint(b *testing.B) {
@@ -183,12 +176,10 @@ func benchmarkColorPrint(b *testing.B, fn printFuncs, length int) {
 
 	b.ReportAllocs()
 	b.ResetTimer()
-	b.RunParallel(func(pb *testing.PB) {
+	for i := 0; i < b.N; i++ {
 		n := rand.Intn(numPrintFunc)
-		for pb.Next() {
-			fn[n](format, buf)
-		}
-	})
+		fn[n](format, buf)
+	}
 	b.SetBytes(int64(len(buf)))
 }
 
@@ -231,14 +222,12 @@ func benchmarkColorString(b *testing.B, fn stringFuncs, length int) {
 	buf := genRandomBytes(b, length)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	b.RunParallel(func(pb *testing.PB) {
-		n := rand.Intn(numstringFunc)
-		for pb.Next() {
-			_ = fn[n](format, buf)
-		}
-	})
 	b.SetBytes(int64(len(buf)))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		n := rand.Intn(numstringFunc)
+		_ = fn[n](format, buf)
+	}
 }
 
 func BenchmarkColorString(b *testing.B) {
@@ -272,12 +261,10 @@ func genAttribute(i int) attribute {
 func benchmark_getCacheColor(b *testing.B, i int) {
 	b.ReportAllocs()
 	b.ResetTimer()
-	b.RunParallel(func(pb *testing.PB) {
+	for i := 0; i < b.N; i++ {
 		p := genAttribute(i)
-		for pb.Next() {
-			_ = GetCacheColor(p)
-		}
-	})
+		_ = GetCacheColor(p)
+	}
 }
 
 func BenchmarkGetCacheColorFg(b *testing.B) {
@@ -315,14 +302,12 @@ func benchmark_colorPrint(b *testing.B, i int) {
 	buf := genRandomBytes(b, length)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	b.RunParallel(func(pb *testing.PB) {
-		p := genAttribute(i)
-		for pb.Next() {
-			ColorPrint(p, format, buf)
-		}
-	})
 	b.SetBytes(int64(len(buf)))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		p := genAttribute(i)
+		ColorPrint(p, format, buf)
+	}
 }
 
 func BenchmarkColorPrintFg(b *testing.B) {
@@ -360,14 +345,12 @@ func benchmark_colorString(b *testing.B, i int) {
 	buf := genRandomBytes(b, length)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	b.RunParallel(func(pb *testing.PB) {
-		p := genAttribute(i)
-		for pb.Next() {
-			_ = ColorString(format, p, buf)
-		}
-	})
 	b.SetBytes(int64(len(buf)))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		p := genAttribute(i)
+		_ = ColorString(format, p, buf)
+	}
 }
 
 func BenchmarkColorStringFg(b *testing.B) {
