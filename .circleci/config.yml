@@ -38,7 +38,7 @@ jobs:
 
   bench:
     docker:
-      - image: google/cloud-sdk:alpine
+      - image: google/cloud-sdk:slim
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /etc/google/application_default_credentials.json
     working_directory: /go/src/github.com/zchee/color
@@ -52,9 +52,14 @@ jobs:
             gcloud auth activate-service-account --key-file ${GOOGLE_APPLICATION_CREDENTIALS}
             gcloud config set project ${GOOGLE_CLOUD_PROJECT}
       - run:
+          name: Install make
+          command: |
+            apt-get update
+            apt-get install -yqq --no-install-recommends --no-install-suggests make
+      - run:
           name: Run benchmark on GCE
           command: |
-            gcloud compute instances create --image-project=debian-cloud --image-family=debian-9 --machine-type "n1-standard-16" --preemptible --zone "asia-northeast1-a" --scopes "https://www.googleapis.com/auth/cloud-platform" --metadata="gsutil_benchstat_bucket_name=${GSUTIL_BENCHSTAT_BUCKET_NAME}" --metadata-from-file='startup-script=hack/gce-benchmark.bash' --verbosity='debug' 'benchstat'
+            make bench/gce
 
 workflows:
   version: 2
