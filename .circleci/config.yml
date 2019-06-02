@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  golang: cci-orb/golang@0.0.6
+  golang: cci-orb/golang@volatile
 
 defaults: &defaults
   executor: golang/stretch
@@ -68,4 +68,9 @@ workflows:
       - test:
           context: org-global
       - bench:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
           context: org-global
