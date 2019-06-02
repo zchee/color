@@ -123,16 +123,16 @@ func New(value ...Attribute) (c *Color) {
 	c = colorPool.Get()
 	c.Add(value...)
 
-	return c
+	return
 }
 
 // Set sets the given parameters immediately. It will change the color of
 // output with the given SGR parameters until color.Unset() is called.
-func Set(p ...Attribute) *Color {
-	c := New(p...)
+func Set(p ...Attribute) (c *Color) {
+	c = New(p...)
 	c.Set()
 
-	return c
+	return
 }
 
 // Unset resets all escape attributes and clears the output. Usually should
@@ -460,7 +460,8 @@ func (c *Color) Equals(c2 *Color) bool {
 
 func getCacheColor(p Attribute) (c *Color) {
 	m := colorCache.Get().(map[Attribute]*Color)
-	c, ok := m[p]
+	var ok bool
+	c, ok = m[p]
 	if ok {
 		colorCache.Put(m)
 		return c
@@ -487,7 +488,7 @@ func colorPrint(p Attribute, format string, a ...interface{}) {
 	c.Printf(format, a...)
 }
 
-func colorString(p Attribute, format string, a ...interface{}) string {
+func colorString(p Attribute, format string, a ...interface{}) (s string) {
 	c := getCacheColor(p)
 
 	if len(a) == 0 {
@@ -531,37 +532,59 @@ func White(format string, a ...interface{}) { colorPrint(FgWhite, format, a...) 
 
 // BlackString is a convenient helper function to return a string with black
 // foreground.
-func BlackString(format string, a ...interface{}) string { return colorString(FgBlack, format, a...) }
+func BlackString(format string, a ...interface{}) (s string) {
+	s = colorString(FgBlack, format, a...)
+	return
+}
 
 // RedString is a convenient helper function to return a string with red
 // foreground.
-func RedString(format string, a ...interface{}) string { return colorString(FgRed, format, a...) }
+func RedString(format string, a ...interface{}) (s string) {
+	s = colorString(FgRed, format, a...)
+	return
+}
 
 // GreenString is a convenient helper function to return a string with green
 // foreground.
-func GreenString(format string, a ...interface{}) string { return colorString(FgGreen, format, a...) }
+func GreenString(format string, a ...interface{}) (s string) {
+	s = colorString(FgGreen, format, a...)
+	return
+}
 
 // YellowString is a convenient helper function to return a string with yellow
 // foreground.
-func YellowString(format string, a ...interface{}) string { return colorString(FgYellow, format, a...) }
+func YellowString(format string, a ...interface{}) (s string) {
+	s = colorString(FgYellow, format, a...)
+	return
+}
 
 // BlueString is a convenient helper function to return a string with blue
 // foreground.
-func BlueString(format string, a ...interface{}) string { return colorString(FgBlue, format, a...) }
+func BlueString(format string, a ...interface{}) (s string) {
+	s = colorString(FgBlue, format, a...)
+	return
+}
 
 // MagentaString is a convenient helper function to return a string with magenta
 // foreground.
-func MagentaString(format string, a ...interface{}) string {
-	return colorString(FgMagenta, format, a...)
+func MagentaString(format string, a ...interface{}) (s string) {
+	s = colorString(FgMagenta, format, a...)
+	return
 }
 
 // CyanString is a convenient helper function to return a string with cyan
 // foreground.
-func CyanString(format string, a ...interface{}) string { return colorString(FgCyan, format, a...) }
+func CyanString(format string, a ...interface{}) (s string) {
+	s = colorString(FgCyan, format, a...)
+	return
+}
 
 // WhiteString is a convenient helper function to return a string with white
 // foreground.
-func WhiteString(format string, a ...interface{}) string { return colorString(FgWhite, format, a...) }
+func WhiteString(format string, a ...interface{}) (s string) {
+	s = colorString(FgWhite, format, a...)
+	return
+}
 
 // HiBlack is a convenient helper function to print with hi-intensity black foreground. A
 // newline is appended to format by default.
@@ -597,42 +620,56 @@ func HiWhite(format string, a ...interface{}) { colorPrint(FgHiWhite, format, a.
 
 // HiBlackString is a convenient helper function to return a string with hi-intensity black
 // foreground.
-func HiBlackString(format string, a ...interface{}) string {
-	return colorString(FgHiBlack, format, a...)
+func HiBlackString(format string, a ...interface{}) (s string) {
+	s = colorString(FgHiBlack, format, a...)
+	return
 }
 
 // HiRedString is a convenient helper function to return a string with hi-intensity red
 // foreground.
-func HiRedString(format string, a ...interface{}) string { return colorString(FgHiRed, format, a...) }
+func HiRedString(format string, a ...interface{}) (s string) {
+	s = colorString(FgHiRed, format, a...)
+	return
+}
 
 // HiGreenString is a convenient helper function to return a string with hi-intensity green
 // foreground.
-func HiGreenString(format string, a ...interface{}) string {
-	return colorString(FgHiGreen, format, a...)
+func HiGreenString(format string, a ...interface{}) (s string) {
+	s = colorString(FgHiGreen, format, a...)
+	return
 }
 
 // HiYellowString is a convenient helper function to return a string with hi-intensity yellow
 // foreground.
-func HiYellowString(format string, a ...interface{}) string {
-	return colorString(FgHiYellow, format, a...)
+func HiYellowString(format string, a ...interface{}) (s string) {
+	s = colorString(FgHiYellow, format, a...)
+	return
 }
 
 // HiBlueString is a convenient helper function to return a string with hi-intensity blue
 // foreground.
-func HiBlueString(format string, a ...interface{}) string { return colorString(FgHiBlue, format, a...) }
+func HiBlueString(format string, a ...interface{}) (s string) {
+	s = colorString(FgHiBlue, format, a...)
+	return
+}
 
 // HiMagentaString is a convenient helper function to return a string with hi-intensity magenta
 // foreground.
-func HiMagentaString(format string, a ...interface{}) string {
-	return colorString(FgHiMagenta, format, a...)
+func HiMagentaString(format string, a ...interface{}) (s string) {
+	s = colorString(FgHiMagenta, format, a...)
+	return
 }
 
 // HiCyanString is a convenient helper function to return a string with hi-intensity cyan
 // foreground.
-func HiCyanString(format string, a ...interface{}) string { return colorString(FgHiCyan, format, a...) }
+func HiCyanString(format string, a ...interface{}) (s string) {
+	s = colorString(FgHiCyan, format, a...)
+	return
+}
 
 // HiWhiteString is a convenient helper function to return a string with hi-intensity white
 // foreground.
-func HiWhiteString(format string, a ...interface{}) string {
-	return colorString(FgHiWhite, format, a...)
+func HiWhiteString(format string, a ...interface{}) (s string) {
+	s = colorString(FgHiWhite, format, a...)
+	return
 }
