@@ -303,7 +303,7 @@ func TestNoColor(t *testing.T) {
 
 }
 
-func TestColorVisual(t *testing.T) {
+func TestColorVisual(_ *testing.T) {
 	// First Visual Test
 	color.Output = colorable.NewColorableStdout()
 
@@ -404,7 +404,7 @@ func TestColorVisual(t *testing.T) {
 	fmt.Fprintln(color.Output, color.HiWhiteString("hwhite"))
 }
 
-func TestNoFormat(t *testing.T) {
+func TestNoFormat(_ *testing.T) {
 	fmt.Printf("%s   %%s = ", color.BlackString("Black"))
 	color.Black("%s")
 
