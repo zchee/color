@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"unsafe"
 
 	colorable "github.com/mattn/go-colorable"
 	isatty "github.com/mattn/go-isatty"
@@ -37,14 +38,14 @@ type Color struct {
 	noColor *bool
 }
 
-// colorPool pools Color struct with leaky pools bounded channels pattern.
-var colorPool *pool
+// AttributeHash is the key of colorCache with hashed Attributes.
+type AttributeHash uint16
 
 // colorCache is used to reduce the count of created Color objects and
 // allows to reuse already created objects with required Attribute using intern sync.Pool pattern.
 var colorCache = sync.Pool{
 	New: func() interface{} {
-		return make(map[Attribute]*Color)
+		return make(map[AttributeHash]*Color)
 	},
 }
 
@@ -119,11 +120,8 @@ const (
 )
 
 // New returns a newly created color object.
-func New(value ...Attribute) (c *Color) {
-	c = colorPool.Get()
-	c.Add(value...)
-
-	return
+func New(value ...Attribute) *Color {
+	return getCacheColor(value...)
 }
 
 // Set sets the given parameters immediately. It will change the color of
@@ -151,12 +149,6 @@ func (c *Color) Add(value ...Attribute) *Color {
 	c.params = append(c.params, value...)
 
 	return c
-}
-
-// Put resets c.params and puts colorPool.
-func (c *Color) Put() {
-	c.Reset()
-	colorPool.Put(c)
 }
 
 // Prepend prepends value Attribute to c.
@@ -485,20 +477,34 @@ func (c *Color) Equals(c2 *Color) bool {
 	return true
 }
 
-func getCacheColor(p Attribute) (c *Color) {
-	m := colorCache.Get().(map[Attribute]*Color)
-	var ok bool
-	c, ok = m[p]
-	if ok {
-		colorCache.Put(m)
-		return c
+func hashAttributes(attrs ...Attribute) (x AttributeHash) {
+	for _, attr := range attrs {
+		s := attr.String()
+		x += AttributeHash(*(*uint16)(unsafe.Pointer(&s)))
 	}
 
-	c = New(p)
-	m[p] = c
+	return
+}
+
+func getCacheColor(p ...Attribute) (c *Color) {
+	if len(p) == 0 {
+		return &Color{params: make([]Attribute, 0)}
+	}
+	k := hashAttributes(p...)
+
+	m := colorCache.Get().(map[AttributeHash]*Color)
+	x, ok := m[k]
+	if ok {
+		c = &Color{params: x.params}
+		colorCache.Put(m)
+		return
+	}
+
+	c = &Color{params: p}
+	m[k] = c
 	colorCache.Put(m)
 
-	return c
+	return
 }
 
 func colorPrint(p Attribute, format string, a ...interface{}) {

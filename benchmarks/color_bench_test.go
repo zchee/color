@@ -235,7 +235,7 @@ func BenchmarkColorString(b *testing.B) {
 }
 
 //go:linkname getCacheColor github.com/zchee/color.getCacheColor
-func getCacheColor(p color.Attribute) (c *color.Color)
+func getCacheColor(p ...color.Attribute) (c *color.Color)
 
 //go:linkname getCachedColorFatih github.com/fatih/color.getCachedColor
 func getCachedColorFatih(p fatihcolor.Attribute) (c *fatihcolor.Color)
