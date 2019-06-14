@@ -7,7 +7,7 @@ package color_test
 import (
 	"testing"
 
-	"github.com/zchee/color"
+	color "github.com/zchee/color/v2"
 )
 
 func TestAttributeString(t *testing.T) {

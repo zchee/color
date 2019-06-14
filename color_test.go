@@ -15,7 +15,7 @@ import (
 
 	colorable "github.com/mattn/go-colorable"
 
-	"github.com/zchee/color"
+	color "github.com/zchee/color/v2"
 )
 
 func TestMain(m *testing.M) {
