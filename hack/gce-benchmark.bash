@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # run GCE instance command
-#  $ GOLANG_VERSION='1.12.4 or whatever' GOOGLE_CLOUD_PROJECT='foo' MACHINE_TYPE='n1-standard-{n}' GSUTIL_BENCHSTAT_BUCKET_NAME='gs://foo/benchstat/'; gcloud --project="$GOOGLE_CLOUD_PROJECT" alpha compute instances create --zone 'asia-northeast1-a' --machine-type "$MACHINE_TYPE" --image-project='debian-cloud' --image-family='debian-9' --boot-disk-type='pd-ssd' --preemptible --scopes 'https://www.googleapis.com/auth/cloud-platform' --metadata="golang_version=${GOLANG_VERSION},gsutil_benchstat_bucket_name=${GSUTIL_BENCHSTAT_BUCKET_NAME}" --metadata-from-file='startup-script=hack/gce-benchmark.bash' --async --verbosity='debug' 'benchstat'
+#  $ GOLANG_VERSION='1.12.6 or whatever' GOOGLE_CLOUD_PROJECT='foo-project' ZONE='asia-northeast1-a' MACHINE_TYPE='n1-standard-{n}' BENCHSTAT_BUCKET_NAME='gs://foo-bucket/'; gcloud --project="$GOOGLE_CLOUD_PROJECT" alpha compute instances create --zone="$ZONE" --machine-type="$MACHINE_TYPE" --image-project='debian-cloud' --image-family='debian-9' --boot-disk-type='pd-ssd' --preemptible --scopes='https://www.googleapis.com/auth/cloud-platform' --service-account='benchstat@foo-project.iam.gserviceaccount.com' --metadata="golang_version=${GOLANG_VERSION},benchstat_bucket_name=${BENCHSTAT_BUCKET_NAME}" --metadata-from-file="startup-script=$(go env GOPATH)/src/github.com/zchee/color/hack/gce-benchmark.bash" --async --verbosity='debug' 'benchstat'
 
 set -x
 
@@ -65,24 +65,21 @@ go mod vendor -v
 
 REVISION="$(git rev-parse --short -q HEAD)"
 BENCH_OUT_BASE="$PWD/$(echo "$PACKAGE" | tr '/' '-')@$REVISION"
-NUM_CPU="$(nproc)"
-
-CPU_FLAG="$((NUM_CPU/4)),$((NUM_CPU/2)),$NUM_CPU"
 
 #  Clear PageCache, dentries and inodes
 sync; echo 3 > /proc/sys/vm/drop_caches
-go test -v -mod=vendor -tags=benchmark -cpu "$CPU_FLAG" -run='^$' -count 8 -bench=. -benchtime=10s . -fatih | tee "${BENCH_OUT_BASE}.old.txt" 2>&1 | go tool test2json
+go test -v -mod=vendor -tags=benchmark -run='^$' -count 8 -bench=. . -fatih | tee "${BENCH_OUT_BASE}.old.txt" 2>&1 | go tool test2json
 
 #  Clear PageCache, dentries and inodes
 sync; echo 3 > /proc/sys/vm/drop_caches
-go test -v -mod=vendor -tags=benchmark -cpu "$CPU_FLAG" -run='^$' -count 8 -bench=. -benchtime=10s . | tee "${BENCH_OUT_BASE}.new.txt" 2>&1 | go tool test2json
+go test -v -mod=vendor -tags=benchmark -run='^$' -count 8 -bench=. . | tee "${BENCH_OUT_BASE}.new.txt" 2>&1 | go tool test2json
 
 benchstat "${BENCH_OUT_BASE}.old.txt" "${BENCH_OUT_BASE}.new.txt" | tee "${BENCH_OUT_BASE}.benchstat.txt"
 
 CPUINFO_OUT="${BENCH_OUT_BASE}.cpuinfo.txt"
 cat /proc/cpuinfo > "$CPUINFO_OUT"
 
-gsutil cp "${BENCH_OUT_BASE}.old.txt" "${BENCH_OUT_BASE}.new.txt" "${BENCH_OUT_BASE}.benchstat.txt" "$CPUINFO_OUT" "$(curl -s -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/attributes/gsutil_benchstat_bucket_name)" || true
+gsutil cp "${BENCH_OUT_BASE}.old.txt" "${BENCH_OUT_BASE}.new.txt" "${BENCH_OUT_BASE}.benchstat.txt" "$CPUINFO_OUT" "$(curl -s -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/attributes/benchstat_bucket_name)" || true
 
 # End tasks
 # ----------------------------------------------------------------------------
