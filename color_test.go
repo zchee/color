@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	var code int
-	defer os.Exit(code)
+	defer func() { os.Exit(code) }()
 	code = m.Run()
 }
 
