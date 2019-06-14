@@ -328,53 +328,74 @@ func (c *Color) Sprintf(format string, a ...interface{}) string {
 	return c.wrap(fmt.Sprintf(format, a...))
 }
 
+// FprintFunc represents a FprintFunc method return type.
+type FprintFunc func(w io.Writer, a ...interface{})
+
 // FprintFunc returns a new function that prints the passed arguments as
 // colorized with color.Fprint().
-func (c *Color) FprintFunc() func(w io.Writer, a ...interface{}) {
+func (c *Color) FprintFunc() FprintFunc {
 	return func(w io.Writer, a ...interface{}) {
 		c.Fprint(w, a...)
 	}
 }
 
+// PrintFunc represents a PrintFunc method return type.
+type PrintFunc func(a ...interface{})
+
 // PrintFunc returns a new function that prints the passed arguments as
 // colorized with color.Print().
-func (c *Color) PrintFunc() func(a ...interface{}) {
+func (c *Color) PrintFunc() PrintFunc {
 	return func(a ...interface{}) {
 		c.Print(a...)
 	}
 }
 
+// FprintfFunc represents a FprintfFunc method return type.
+type FprintfFunc func(w io.Writer, format string, a ...interface{})
+
 // FprintfFunc returns a new function that prints the passed arguments as
 // colorized with color.Fprintf().
-func (c *Color) FprintfFunc() func(w io.Writer, format string, a ...interface{}) {
+func (c *Color) FprintfFunc() FprintfFunc {
 	return func(w io.Writer, format string, a ...interface{}) {
 		c.Fprintf(w, format, a...)
 	}
 }
 
+// PrintfFunc represents a PrintfFunc method return type.
+type PrintfFunc func(format string, a ...interface{})
+
 // PrintfFunc returns a new function that prints the passed arguments as
 // colorized with color.Printf().
-func (c *Color) PrintfFunc() func(format string, a ...interface{}) {
+func (c *Color) PrintfFunc() PrintfFunc {
 	return func(format string, a ...interface{}) {
 		c.Printf(format, a...)
 	}
 }
 
+// FprintlnFunc represents a FprintlnFunc method return type.
+type FprintlnFunc func(w io.Writer, a ...interface{})
+
 // FprintlnFunc returns a new function that prints the passed arguments as
 // colorized with color.Fprintln().
-func (c *Color) FprintlnFunc() func(w io.Writer, a ...interface{}) {
+func (c *Color) FprintlnFunc() FprintlnFunc {
 	return func(w io.Writer, a ...interface{}) {
 		c.Fprintln(w, a...)
 	}
 }
 
+// PrintlnFunc represents a PrintlnFunc method return type.
+type PrintlnFunc func(a ...interface{})
+
 // PrintlnFunc returns a new function that prints the passed arguments as
 // colorized with color.Println().
-func (c *Color) PrintlnFunc() func(a ...interface{}) {
+func (c *Color) PrintlnFunc() PrintlnFunc {
 	return func(a ...interface{}) {
 		c.Println(a...)
 	}
 }
+
+// SprintFunc represents a SprintFunc method return type.
+type SprintFunc func(a ...interface{}) string
 
 // SprintFunc returns a new function that returns colorized strings for the
 // given arguments with fmt.Sprint(). Useful to put into or mix into other
@@ -382,25 +403,31 @@ func (c *Color) PrintlnFunc() func(a ...interface{}) {
 //
 //	put := New(FgYellow).SprintFunc()
 //	fmt.Fprintf(color.Output, "This is a %s", put("warning"))
-func (c *Color) SprintFunc() func(a ...interface{}) string {
+func (c *Color) SprintFunc() SprintFunc {
 	return func(a ...interface{}) string {
 		return c.wrap(fmt.Sprint(a...))
 	}
 }
 
+// SprintfFunc represents a SprintfFunc method return type.
+type SprintfFunc func(format string, a ...interface{}) string
+
 // SprintfFunc returns a new function that returns colorized strings for the
 // given arguments with fmt.Sprintf(). Useful to put into or mix into other
 // string. Windows users should use this in conjunction with color.Output.
-func (c *Color) SprintfFunc() func(format string, a ...interface{}) string {
+func (c *Color) SprintfFunc() SprintfFunc {
 	return func(format string, a ...interface{}) string {
 		return c.wrap(fmt.Sprintf(format, a...))
 	}
 }
 
+// SprintlnFunc represents a SprintlnFunc method return type.
+type SprintlnFunc func(a ...interface{}) string
+
 // SprintlnFunc returns a new function that returns colorized strings for the
 // given arguments with fmt.Sprintln(). Useful to put into or mix into other
 // string. Windows users should use this in conjunction with color.Output.
-func (c *Color) SprintlnFunc() func(a ...interface{}) string {
+func (c *Color) SprintlnFunc() SprintlnFunc {
 	return func(a ...interface{}) string {
 		return c.wrap(fmt.Sprintln(a...))
 	}
