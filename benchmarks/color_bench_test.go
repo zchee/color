@@ -18,7 +18,7 @@ import (
 	_ "unsafe" // required for go:linkname
 
 	fatihcolor "github.com/fatih/color"
-	"github.com/zchee/color"
+	color "github.com/zchee/color/v2"
 )
 
 const length = 1024 * 1024 // 1 MB
