@@ -1,4 +1,4 @@
-module github.com/zchee/color
+module github.com/zchee/color/v2
 
 require (
 	github.com/mattn/go-colorable v0.1.2
