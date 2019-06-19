@@ -14,7 +14,7 @@ suits you.
 ## Install
 
 ```sh
-go get -u github.com/zchee/color
+go get -u github.com/zchee/color/v2
 ```
 
 Note that the `vendor` folder is here for stability. Remove the folder if you
