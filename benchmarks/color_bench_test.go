@@ -234,7 +234,7 @@ func BenchmarkColorString(b *testing.B) {
 	benchmarkColorString(b, getStringFuncs(), length)
 }
 
-//go:linkname getCacheColor github.com/zchee/color.getCacheColor
+//go:linkname getCacheColor github.com/zchee/color/v2.getCacheColor
 func getCacheColor(p ...color.Attribute) (c *color.Color)
 
 //go:linkname getCachedColorFatih github.com/fatih/color.getCachedColor
@@ -283,7 +283,7 @@ func BenchmarkGetCacheColorBgHi(b *testing.B) {
 	benchmark_getCacheColor(b, 100)
 }
 
-//go:linkname colorPrint github.com/zchee/color.colorPrint
+//go:linkname colorPrint github.com/zchee/color/v2.colorPrint
 func colorPrint(p color.Attribute, format string, a ...interface{})
 
 //go:linkname colorPrintFatih github.com/fatih/color.colorPrint
@@ -326,7 +326,7 @@ func BenchmarkColorPrintBgHi(b *testing.B) {
 	benchmark_colorPrint(b, 100)
 }
 
-//go:linkname colorString github.com/zchee/color.colorString
+//go:linkname colorString github.com/zchee/color/v2.colorString
 func colorString(p color.Attribute, format string, a ...interface{}) string
 
 //go:linkname colorStringFatih github.com/fatih/color.colorString
