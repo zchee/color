@@ -23,18 +23,19 @@ type stringHeader struct {
 	Len  int
 }
 
-// unsafeToSlice returns a byte array that points to the given string without a heap allocation.
+// unsafeByteSlice returns a byte array that points to the given string without a heap allocation.
 // The string must be preserved until the byte array is disposed.
-func unsafeByteSlice(s string) []byte {
+func unsafeByteSlice(s string) (p []byte) {
 	if s == "" {
 		return nil
 	}
 
-	sh := *(*stringHeader)(unsafe.Pointer(&s))
-	bh := sliceHeader{
+	sh := (*stringHeader)(unsafe.Pointer(&s))
+	p = *(*[]byte)(unsafe.Pointer(&sliceHeader{
 		Data: sh.Data,
 		Len:  sh.Len,
 		Cap:  sh.Len,
-	}
-	return *(*[]byte)(unsafe.Pointer(&bh))
+	}))
+
+	return
 }
