@@ -140,7 +140,7 @@ func Unset() {
 		return
 	}
 
-	Output.Write(unsafeToSlice(escapePrefix + Reset.String() + escapeSuffix))
+	Output.Write(unsafeByteSlice(escapePrefix + Reset.String() + escapeSuffix))
 }
 
 // Add is used to chain SGR parameters. Use as many as parameters to combine
@@ -187,7 +187,7 @@ func (c *Color) sequence() (s string) {
 	var b strings.Builder
 
 	for _, attr := range c.params {
-		b.Write(unsafeToSlice(attr.String()))
+		b.Write(unsafeByteSlice(attr.String()))
 		b.WriteByte(';')
 	}
 
@@ -228,7 +228,7 @@ func (c *Color) unsetWriter(w io.Writer) {
 		return
 	}
 
-	w.Write(unsafeToSlice(escapePrefix + Reset.String() + escapeSuffix))
+	w.Write(unsafeByteSlice(escapePrefix + Reset.String() + escapeSuffix))
 }
 
 // Fprint formats using the default formats for its operands and writes to w.

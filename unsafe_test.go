@@ -30,7 +30,7 @@ func Test_unsafeToSlice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := unsafeToSlice(tt.s); !reflect.DeepEqual(got, tt.want) {
+			if got := unsafeByteSlice(tt.s); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("unsafeToSlice(%v) = %v, want %v", tt.s, got, tt.want)
 			}
 		})
@@ -68,7 +68,7 @@ func Benchmark_unsafeToSlice(b *testing.B) {
 		s := randomString(rand.Intn(65526) + 10)
 		b.SetBytes(int64(len(s)))
 		for pb.Next() {
-			_ = unsafeToSlice(s)
+			_ = unsafeByteSlice(s)
 		}
 	})
 }
