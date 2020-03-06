@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # run GCE instance command
-#  $ GOLANG_VERSION='1.12.6 or whatever' GOOGLE_CLOUD_PROJECT='foo-project' ZONE='asia-northeast1-a' MACHINE_TYPE='n1-standard-{n}' BENCHSTAT_BUCKET_NAME='gs://foo-bucket/'; gcloud --project="$GOOGLE_CLOUD_PROJECT" alpha compute instances create --zone="$ZONE" --machine-type="$MACHINE_TYPE" --image-project='debian-cloud' --image-family='debian-9' --boot-disk-type='pd-ssd' --preemptible --scopes='https://www.googleapis.com/auth/cloud-platform' --service-account='benchstat@foo-project.iam.gserviceaccount.com' --metadata="golang_version=${GOLANG_VERSION},benchstat_bucket_name=${BENCHSTAT_BUCKET_NAME}" --metadata-from-file="startup-script=$(go env GOPATH)/src/github.com/zchee/color/hack/gce-benchmark.bash" --async --verbosity='debug' 'benchstat'
+#  $ GOLANG_VERSION='1.12.6 or whatever' GOOGLE_CLOUD_PROJECT='foo-project' ZONE='asia-northeast1-a' MACHINE_TYPE='n1-standard-{n}' BENCHSTAT_BUCKET_NAME='gs://foo-bucket/'; gcloud --project="$GOOGLE_CLOUD_PROJECT" compute instances create --zone="$ZONE" --machine-type="$MACHINE_TYPE" --image-project='debian-cloud' --image-family='debian-9' --boot-disk-type='pd-ssd' --preemptible --scopes='https://www.googleapis.com/auth/cloud-platform' --service-account='benchstat@foo-project.iam.gserviceaccount.com' --metadata="golang_version=${GOLANG_VERSION},benchstat_bucket_name=${BENCHSTAT_BUCKET_NAME}" --metadata-from-file="startup-script=$(go env GOPATH)/src/github.com/zchee/color/hack/gce-benchmark.bash" --async --verbosity='debug' 'benchstat'
 
 set -x
 
@@ -48,17 +48,20 @@ rm ~/go.tgz
 export GOPATH=~/go
 export GOCACHE=~/.cache/go-build
 export PATH="$GOPATH/bin:/usr/local/go/bin:$PATH"
-mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-mkdir -p "$GOCACHE" && chmod -R 777 "$GOCACHE"
+mkdir -p "$GOPATH/src" "$GOPATH/bin" "$GOCACHE" && chmod -R 777 "$GOPATH" "$GOCACHE"
 
+go env
 go version
 
+export GO111MODULE=off
+
 go get -u -v golang.org/x/perf/cmd/benchstat
-go get -u -v github.com/zchee/color
+go get -u -d -v github.com/zchee/color
 
 export GO111MODULE=on
 
 cd "$GOPATH/src/$PACKAGE/benchmarks" || return
+
 go mod download
 go mod tidy -v
 go mod vendor -v
